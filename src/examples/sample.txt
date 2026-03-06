@@ -1,0 +1,1 @@
+Standalone agents make decisions, plan steps, and use tools at runtime. In production, those tools must be sandboxed and observed. Node.js makes it easy to orchestrate I/O, streaming responses, and multiple agent workers.

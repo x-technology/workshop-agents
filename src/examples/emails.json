@@ -1,0 +1,20 @@
+[
+  {
+    "id": "email-1",
+    "from": "ceo@company.com",
+    "subject": "Please review the Q1 roadmap",
+    "body": "Can you review the Q1 roadmap and send feedback by Friday?"
+  },
+  {
+    "id": "email-2",
+    "from": "hr@company.com",
+    "subject": "Team sync tomorrow",
+    "body": "Inviting you to a team sync meeting tomorrow at 10:00 via Zoom."
+  },
+  {
+    "id": "email-3",
+    "from": "newsletter@product.com",
+    "subject": "Weekly digest",
+    "body": "Here are the latest updates from the product team."
+  }
+]

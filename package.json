@@ -1,0 +1,30 @@
+{
+  "name": "holyjs-agent-runtime-workshop",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "*",
+    "ai": "*",
+    "n8n-workflow": "*",
+    "n8n": "*"
+  },
+  "overrides": {
+    "zod": "3.25.76"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "nodes": ["src/04-n8n/EmailRouter.node.js"]
+  },
+  "scripts": {
+    "start:n8n": "n8n",
+    "start:01": "node src/01-standalone/run.js",
+    "start:02": "node src/02-sdk/run.js",
+    "start:03": "node src/03-orchestrator/run.js",
+    "start:04": "node src/04-n8n/print-instructions.js",
+    "start:05": "node src/05-security-observability/run.js"
+  }
+}
