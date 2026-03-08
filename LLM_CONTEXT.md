@@ -1,6 +1,6 @@
 # LLM Context: HolyJS 2026 Agent Runtime Workshop
 
-This repository is a workshop project for building agent runtimes in Node.js. The practical flow demonstrates an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to specialized agents. The workshop intentionally stays small and offline-friendly. A mock model is provided so the demos run without API keys. If `OPENAI_API_KEY` is set, the AI SDK uses a real model.
+This repository is a workshop project for building agent runtimes in Node.js. The practical flow demonstrates an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to specialized agents. The workshop intentionally stays small and offline-friendly. A mock model is provided so the AI SDK demos run without API keys. The Google ADK demo uses Gemini when `GOOGLE_API_KEY` or `GEMINI_API_KEY` is set, otherwise it falls back locally.
 
 ## Project goals
 
@@ -24,7 +24,7 @@ npm run start:01
    - `taskAgent`
    - `eventAgent`
    - `noActionAgent`
-3. Each agent uses the AI SDK to generate structured JSON output.
+3. The router agents in `src/agents/` use the AI SDK to generate structured JSON output.
 
 ## Model selection
 
@@ -45,7 +45,7 @@ npm run start:01
   - From-scratch rule-based classifier to show baseline runtime logic (`run.js`).
 
 - `src/02-sdk/`
-  - AI SDK demo using the email router (`run.js`).
+  - Google ADK demo using a single triage agent (`run.js`).
   - Short README describing SDK rationale.
 
 - `src/03-orchestrator/`
@@ -68,7 +68,7 @@ npm run start:01
 ## Entry points
 
 - `npm run start:01` → rule-based standalone triage
-- `npm run start:02` → AI SDK triage for one email
+- `npm run start:02` → Google ADK triage for one email
 - `npm run start:03` → orchestration across many emails
 - `npm run start:04` → webhook receiver for n8n
 - `npm run start:05` → security + observability demo

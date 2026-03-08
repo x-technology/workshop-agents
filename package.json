@@ -8,16 +8,25 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "*",
+    "@google/adk": "^0.4.0",
+    "@google/genai": "*",
     "ai": "*",
-    "n8n-workflow": "*",
-    "n8n": "*"
+    "n8n": "*",
+    "n8n-workflow": "*"
   },
   "overrides": {
-    "zod": "3.25.76"
+    "zod": "3.25.76",
+    "@opentelemetry/sdk-node": "0.205.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "0.205.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "0.205.0",
+    "@opentelemetry/exporter-metrics-otlp-proto": "0.205.0",
+    "@opentelemetry/exporter-logs-otlp-http": "0.205.0"
   },
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "nodes": ["src/04-n8n/EmailRouter.node.js"]
+    "nodes": [
+      "src/04-n8n/EmailRouter.node.js"
+    ]
   },
   "scripts": {
     "start:n8n": "n8n",

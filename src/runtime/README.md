@@ -1,6 +1,6 @@
 # Runtime model
 
-The workshop keeps a minimal runtime model for the theory section, but the practical flow uses the AI SDK.
+The workshop keeps a minimal runtime model for the theory section, but the practical flow uses the AI SDK and the Google ADK.
 
 Topics to cover:
 

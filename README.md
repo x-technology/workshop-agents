@@ -2,7 +2,7 @@
 
 This folder contains runnable code samples that map to the workshop plan. The practical flow is built around an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to downstream agents.
 
-The demos use the official Vercel AI SDK (`ai` npm package). A mock model is provided for offline runs.
+Most demos use the official Vercel AI SDK (`ai` npm package). The SDK step (`src/02-sdk/`) uses the Google ADK (`@google/adk`). A mock model or local fallback is provided for offline runs.
 
 ## Quick start
 
@@ -20,7 +20,7 @@ npm run start:01
 2. Разработка агента "на коленке"
    - Run `npm run start:01` and open `src/01-standalone/run.js`.
 3. Теория про SDK для агентов
-   - See `src/02-sdk/README.md` for the AI SDK overview.
+   - See `src/02-sdk/README.md` for the Google ADK overview.
 4. Разработка агента на SDK
    - Run `npm run start:02` and open `src/02-sdk/run.js`.
 5. Теория про оркестрацию. Что делать, когда агентов несколько
@@ -38,7 +38,7 @@ npm run start:01
 - `src/agents/` email router + downstream agents
 - `src/ai/` model selection (real model or mock)
 - `src/01-standalone/` from-scratch agent loop
-- `src/02-sdk/` AI SDK usage
+- `src/02-sdk/` Google ADK usage
 - `src/03-orchestrator/` multi-agent coordination
 - `src/04-n8n/` n8n webhook integration mock
 - `src/05-security-observability/` policies, tracing, guardrails
@@ -48,4 +48,6 @@ npm run start:01
 ## Notes
 
 - The AI SDK uses a mock model when `OPENAI_API_KEY` is not set.
+- The ADK demo uses Gemini when `GOOGLE_API_KEY` or `GEMINI_API_KEY` is set, otherwise it falls back locally.
+- The ADK demo also supports OpenAI or a local OpenAI-compatible endpoint via `SDK_PROVIDER`; see `src/02-sdk/README.md`.
 - Replace the model in `src/ai/model.js` when using a real provider.

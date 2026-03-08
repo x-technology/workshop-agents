@@ -40,3 +40,22 @@ For each email, it outputs an item with:
 
 - This package intentionally keeps the code small and workshop-friendly.
 - The node imports `routeEmail` from `src/agents/email-router.js` in this repo, so it’s intended to be used from this workshop checkout.
+
+## Steps to execute
+npx n8n
+# or: npm run start:n8n
+If you want the custom node to load locally
+# from repo root
+npm link
+
+# create a local custom extensions folder inside the repo
+mkdir -p .n8n/custom
+cd .n8n/custom
+npm init -y
+npm link holyjs-agent-runtime-workshop
+
+# run n8n pointing to this local custom folder
+cd ..
+N8N_CUSTOM_EXTENSIONS=$PWD/.n8n/custom npx n8n
+
+That keeps everything inside the project directory. If you want, I can run these commands for you.

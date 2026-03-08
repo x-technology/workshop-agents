@@ -1,9 +1,25 @@
-# AI SDK (Vercel)
+# Google ADK (Agent Development Kit)
 
-This step replaces the custom SDK layer with the official AI SDK (`ai` npm package).
+This step uses the Google ADK (`@google/adk`) to run a single email-triage agent.
 
-- Uses `generateText` with a model provider.
+- Uses an `LlmAgent` + `InMemoryRunner` for a minimal, inspectable flow.
 - Keeps prompts and parsing explicit for teaching purposes.
-- The model is selected in `src/ai/model.js`.
+- The script uses Gemini when a key is present and falls back to a local rule-based classifier when it is not.
 
-If you have an API key set, the real model is used. Otherwise a mock model is used for offline demos.
+## Model selection
+
+Choose a provider via `SDK_PROVIDER` (`auto` by default, which picks Gemini if available, otherwise OpenAI):
+
+- `SDK_PROVIDER=gemini` (default if a Gemini key is present)
+  - `GOOGLE_API_KEY` or `GEMINI_API_KEY` required
+  - Optional: `GEMINI_MODEL` (defaults to `gemini-2.5-flash`)
+- `SDK_PROVIDER=openai`
+  - `OPENAI_API_KEY` required
+  - Optional: `OPENAI_MODEL` (defaults to `gpt-4o-mini`)
+  - Optional: `OPENAI_BASE_URL` (defaults to `https://api.openai.com/v1`)
+- `SDK_PROVIDER=local` (OpenAI-compatible endpoint)
+  - Optional: `LOCAL_API_KEY` if your local server requires it
+  - Optional: `LOCAL_BASE_URL` (defaults to `http://localhost:11434/v1`)
+  - Optional: `LOCAL_MODEL` (defaults to `llama3.1`)
+
+If no credentials are available, the script falls back to a local rule-based classifier.

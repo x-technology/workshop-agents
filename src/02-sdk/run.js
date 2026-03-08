@@ -1,17 +1,26 @@
-import { routeEmail } from '../agents/email-router.js';
+import { runTriageAgent } from './adk-runner.js';
+import { SAMPLE_EMAIL } from './email-input.js';
+import { fallbackRoute } from './fallback.js';
+import { safeJsonParse } from './json.js';
+import { resolveModel } from './model-resolver.js';
 
-const input = {
-  from: 'boss@company.com',
-  subject: 'Please follow up with the client',
-  body: 'Can you schedule a call and send me a summary?'
-};
+async function main() {
+  const { model, reason } = resolveModel();
+  if (!model) {
+    console.log(`No model available. Using local fallback classification. ${reason}`);
+    const fallback = fallbackRoute(SAMPLE_EMAIL);
+    console.log('Classification:', fallback.classification);
+    console.log('Result:', fallback.result);
+    return;
+  }
 
-routeEmail(input)
-  .then(out => {
-    console.log('Classification:', out.classification);
-    console.log('Result:', out.result);
-  })
-  .catch(err => {
-    console.error('Error:', err.message);
-    process.exit(1);
-  });
+  const responseText = await runTriageAgent({ email: SAMPLE_EMAIL, model });
+  const parsed = safeJsonParse(responseText, fallbackRoute(SAMPLE_EMAIL));
+  console.log('Classification:', parsed.classification);
+  console.log('Result:', parsed.result);
+}
+
+main().catch(err => {
+  console.error('Error:', err.message);
+  process.exit(1);
+});
