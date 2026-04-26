@@ -1,0 +1,5 @@
+{"time":"2026-04-26T18:11:07.206Z","event":"email.received","data":{"emailId":"email_1777227067205_y2kmxm","from":"boss@company.com","subject":"Follow up"}}
+{"time":"2026-04-26T18:11:07.206Z","event":"agent.completed","data":{"emailId":"email_1777227067205_y2kmxm","agent":"securityGuard","status":"success","durationMs":0,"outcome":"passed"}}
+{"time":"2026-04-26T18:11:07.214Z","event":"agent.completed","data":{"emailId":"email_1777227067205_y2kmxm","agent":"router","status":"success","durationMs":8,"category":"task","confidence":0.78}}
+{"time":"2026-04-26T18:11:07.215Z","event":"agent.completed","data":{"emailId":"email_1777227067205_y2kmxm","agent":"taskAgent","status":"success","durationMs":1,"category":"task"}}
+{"time":"2026-04-26T18:11:07.215Z","event":"email.routed","data":{"emailId":"email_1777227067205_y2kmxm","category":"task","totalDurationMs":10}}

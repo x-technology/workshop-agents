@@ -1,12 +1,13 @@
-# n8n community node
+# n8n custom node
 
-This step now ships a minimal n8n community node, registered from the root `package.json`, instead of a standalone webhook server. The node wraps `routeEmail` and lets n8n call the router directly inside a workflow.
+This step ships minimal n8n custom nodes for email routing and reliability monitoring. The main node wraps the router, and the monitor node summarizes per-agent health from the observability trace.
 
 ## What you get
 
 - `EmailRouter.node.js` – the node implementation
+- `AgentReliability.node.js` – the reliability summary node
 - `email-router.svg` – node icon
-- root `package.json` – n8n node registration
+- `print-instructions.js` – stages a safe `.n8n/custom` folder for n8n to scan
 
 ## Inputs and outputs
 
@@ -32,30 +33,61 @@ For each email, it outputs an item with:
 
 ## Local dev setup
 
-1. Install n8n and create a custom extensions folder.
-2. Link this package into n8n so the node shows up in the UI.
-3. Restart n8n and add the “Email Router” node to any workflow.
+1. Run `npm run start:04` from the repo root.
+2. That creates `.n8n/custom/EmailRouter.node.js`, `.n8n/custom/AgentReliability.node.js`, and copies the icon into `.n8n/custom/`.
+3. Start n8n with `npm run start:n8n`.
+4. Add the “Email Router” and “Agent Reliability Monitor” nodes to your workflow.
 
 ## Notes
 
 - This package intentionally keeps the code small and workshop-friendly.
+- The staged custom node file re-exports `EmailRouter` from `src/04-n8n/EmailRouter.node.js`.
+- The staged custom node file also re-exports `AgentReliability` from `src/04-n8n/AgentReliability.node.js`.
 - The node imports `routeEmail` from `src/agents/email-router.js` in this repo, so it’s intended to be used from this workshop checkout.
+- Reliability traces are written to `src/05-security-observability/trace.jsonl` by default.
+
+## Suggested workflow
+
+1. Trigger with a Manual Trigger, Webhook, or test payload.
+2. Send email JSON into `Email Router`.
+3. Leave `Write Reliability Trace` enabled so each router/specialist run is appended to the trace log.
+4. Feed a later branch into `Agent Reliability Monitor` to read the trace and emit one item per agent with:
+   - success and failure counts
+   - blocked prompt injection counts
+   - average latency
+   - reliability ratio
 
 ## Steps to execute
-npx n8n
-# or: npm run start:n8n
-If you want the custom node to load locally
-# from repo root
-npm link
 
-# create a local custom extensions folder inside the repo
-mkdir -p .n8n/custom
-cd .n8n/custom
-npm init -y
-npm link holyjs-agent-runtime-workshop
+```bash
+npm run start:n8n
+```
 
-# run n8n pointing to this local custom folder
-cd ..
-N8N_CUSTOM_EXTENSIONS=$PWD/.n8n/custom npx n8n
+To stage the custom node locally:
 
-That keeps everything inside the project directory. If you want, I can run these commands for you.
+```bash
+npm run start:04
+npm run start:n8n
+```
+
+## Troubleshooting
+
+`N8N_CUSTOM_EXTENSIONS` is a raw scan directory, not a package loader. n8n
+recursively loads every `**/*.node.js` file it finds inside that directory.
+
+Do not point it at a linked package with a `node_modules` tree inside. If you do
+that, n8n will try to load dependency files such as `pkce-challenge/dist/index.node.js`
+as workflow nodes and fail during startup.
+
+`npm run start:n8n` avoids this by forcing `N8N_USER_FOLDER` to the repository
+root, so n8n uses this repo's `.n8n/custom` folder as its built-in custom
+extension directory and does not scan `~/.n8n/custom`.
+
+If you already hit that problem, remove the linked custom package and restage
+the local scan directory:
+
+```bash
+rm -rf "$HOME/.n8n/custom/node_modules/holyjs-agent-runtime-workshop"
+npm run start:04
+npm run start:n8n
+```
