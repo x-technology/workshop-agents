@@ -19,12 +19,9 @@ npm run start:01
 
 ## How the email flow works
 
-1. `routeEmail` classifies an email as `task`, `event`, or `no_action`.
-2. It dispatches to the corresponding agent:
-   - `taskAgent`
-   - `eventAgent`
-   - `noActionAgent`
-3. The router agents in `src/agents/` use the AI SDK to generate structured JSON output.
+1. `src/02-sdk/` classifies one email as `task`, `event`, or `no_action`.
+2. `src/03-orchestrator/` reuses that classifier and dispatches to downstream specialists.
+3. The downstream specialists simulate either task creation or no action while preserving a stable router API.
 
 ## Model selection
 
@@ -49,7 +46,7 @@ npm run start:01
   - Short README describing SDK rationale.
 
 - `src/03-orchestrator/`
-  - Multi-email orchestration example (`run.js`).
+  - Single-email orchestration example (`run.js`).
 
 - `src/04-n8n/`
   - Minimal webhook receiver to integrate with n8n (`webhook-receiver.js`).
@@ -69,7 +66,7 @@ npm run start:01
 
 - `npm run start:01` → rule-based standalone triage
 - `npm run start:02` → Google ADK triage for one email
-- `npm run start:03` → orchestration across many emails
+- `npm run start:03` → orchestration for one email using the step 02 classifier
 - `npm run start:04` → webhook receiver for n8n
 - `npm run start:05` → security + observability demo
 

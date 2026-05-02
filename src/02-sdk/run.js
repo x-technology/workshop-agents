@@ -1,7 +1,6 @@
-import { runTriageAgent } from './adk-runner.js';
+import { routeEmailWithAdk } from './adk-runner.js';
 import { SAMPLE_EMAIL } from './email-input.js';
 import { fallbackRoute } from './fallback.js';
-import { safeJsonParse } from './json.js';
 import { resolveModel } from './model-resolver.js';
 
 async function main() {
@@ -14,8 +13,7 @@ async function main() {
     return;
   }
 
-  const responseText = await runTriageAgent({ email: SAMPLE_EMAIL, model });
-  const parsed = safeJsonParse(responseText, fallbackRoute(SAMPLE_EMAIL));
+  const parsed = await routeEmailWithAdk({ email: SAMPLE_EMAIL, model });
   console.log('Classification:', parsed.classification);
   console.log('Result:', parsed.result);
 }

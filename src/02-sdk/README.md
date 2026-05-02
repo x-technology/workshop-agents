@@ -3,6 +3,7 @@
 This step uses the Google ADK (`@google/adk`) to run a single email-triage agent.
 
 - Uses an `LlmAgent` + `InMemoryRunner` for a minimal, inspectable flow.
+- Uses `runner.runEphemeral(...)` because the demo only needs a one-shot session per email.
 - Keeps prompts and parsing explicit for teaching purposes.
 - The script uses Gemini when a key is present and falls back to a local rule-based classifier when it is not.
 

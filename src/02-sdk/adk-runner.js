@@ -1,11 +1,63 @@
 import { InMemoryRunner, LlmAgent, isFinalResponse } from '@google/adk';
 import { createUserContent } from '@google/genai';
-import { APP_NAME, SESSION_ID, USER_ID } from './config.js';
+import { APP_NAME, USER_ID } from './config.js';
+import { fallbackClassification, fallbackRoute, normalizeClassification } from './fallback.js';
+import { safeJsonParse } from './json.js';
+
+export function formatEmailForAgent(email) {
+  return [
+    `From: ${email.from ?? 'unknown'}`,
+    `Subject: ${email.subject ?? ''}`,
+    `Body: ${email.body ?? ''}`
+  ].join('\n');
+}
+
+export async function runEmailAgent({ model, agentName, instruction, promptLines }) {
+  const agent = new LlmAgent({
+    name: agentName,
+    model,
+    instruction
+  });
+
+  const runner = new InMemoryRunner({ appName: APP_NAME, agent });
+  const prompt = promptLines.join('\n');
+
+  const message = createUserContent(prompt);
+  let finalResponse = '';
+
+  // `runEphemeral(...)` fits this step because each email is handled as a one-shot run.
+  // Use explicit `createSession(...)` + `runAsync(...)` instead when you need a stable session
+  // ID or want to preserve state across multiple user messages.
+  for await (const event of runner.runEphemeral({ userId: USER_ID, newMessage: message })) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
+      finalResponse = event.content.parts.map(part => part.text ?? '').join('');
+    }
+  }
+
+  return finalResponse;
+}
+
+export async function runClassificationAgent({ email, model }) {
+  return runEmailAgent({
+    model,
+    agentName: 'email_classification_agent',
+    instruction: [
+      'You are an email classification agent.',
+      'Return JSON only. No markdown, no extra text.',
+      'Output schema:',
+      '{ "category": "task|event|no_action", "confidence": 0-1, "reason": "..." }'
+    ].join('\n'),
+    promptLines: [
+      'EMAIL_TO_CLASSIFY',
+      formatEmailForAgent(email)
+    ]
+  });
+}
 
 export async function runTriageAgent({ email, model }) {
-  const triageAgent = new LlmAgent({
-    name: 'email_triage_agent',
+  return runEmailAgent({
     model,
+    agentName: 'email_triage_agent',
     instruction: [
       'You are an email triage agent.',
       'Return JSON only. No markdown, no extra text.',
@@ -21,27 +73,21 @@ export async function runTriageAgent({ email, model }) {
       '    // { "type":"no_action","summary":"..." }',
       '  }',
       '}'
-    ].join('\n')
+    ].join('\n'),
+    promptLines: [
+      'EMAIL_TO_TRIAGE',
+      formatEmailForAgent(email)
+    ]
   });
+}
 
-  const runner = new InMemoryRunner({ appName: APP_NAME, agent: triageAgent });
-  await runner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID });
+export async function categorizeEmailWithAdk({ email, model }) {
+  const responseText = await runClassificationAgent({ email, model });
+  const parsed = safeJsonParse(responseText, fallbackClassification(email));
+  return normalizeClassification(parsed, email);
+}
 
-  const prompt = [
-    'EMAIL_TO_TRIAGE',
-    `From: ${email.from}`,
-    `Subject: ${email.subject}`,
-    `Body: ${email.body}`
-  ].join('\n');
-
-  const message = createUserContent(prompt);
-  let finalResponse = '';
-
-  for await (const event of runner.runAsync({ userId: USER_ID, sessionId: SESSION_ID, newMessage: message })) {
-    if (isFinalResponse(event) && event.content?.parts?.length) {
-      finalResponse = event.content.parts.map(part => part.text ?? '').join('');
-    }
-  }
-
-  return finalResponse;
+export async function routeEmailWithAdk({ email, model }) {
+  const responseText = await runTriageAgent({ email, model });
+  return safeJsonParse(responseText, fallbackRoute(email));
 }

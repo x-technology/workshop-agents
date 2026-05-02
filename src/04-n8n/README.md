@@ -43,7 +43,7 @@ For each email, it outputs an item with:
 - This package intentionally keeps the code small and workshop-friendly.
 - The staged custom node file re-exports `EmailRouter` from `src/04-n8n/EmailRouter.node.js`.
 - The staged custom node file also re-exports `AgentReliability` from `src/04-n8n/AgentReliability.node.js`.
-- The node imports `routeEmail` from `src/agents/email-router.js` in this repo, so it’s intended to be used from this workshop checkout.
+- The node routes emails through `src/05-security-observability/observability.js`, which reuses the step 03 router and action agents.
 - Reliability traces are written to `src/05-security-observability/trace.jsonl` by default.
 
 ## Suggested workflow

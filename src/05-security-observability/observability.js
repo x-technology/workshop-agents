@@ -6,7 +6,7 @@ import {
   eventAgent,
   noActionAgent,
   taskAgent
-} from '../agents/email-router.js';
+} from '../03-orchestrator/email-router.js';
 
 const stepDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(stepDir, '../..');

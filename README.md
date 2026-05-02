@@ -35,11 +35,9 @@ npm run start:01
 
 ## Structure
 
-- `src/agents/` email router + downstream agents
-- `src/ai/` model selection (real model or mock)
 - `src/01-standalone/` from-scratch agent loop
-- `src/02-sdk/` Google ADK usage
-- `src/03-orchestrator/` multi-agent coordination
+- `src/02-sdk/` Google ADK single-agent triage
+- `src/03-orchestrator/` single-email orchestrator that reuses the step 02 classifier
 - `src/04-n8n/` n8n webhook integration mock
 - `src/05-security-observability/` policies, tracing, guardrails
 - `src/examples/` practice tasks and sample emails

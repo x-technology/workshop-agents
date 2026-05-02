@@ -166,8 +166,8 @@ Files:
 
 - [src/02-sdk/run.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/02-sdk/run.js:1)
 - [src/02-sdk/README.md](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/02-sdk/README.md:1)
-- [src/agents/email-router.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/agents/email-router.js:1)
-- [src/ai/model.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/ai/model.js:1)
+- [src/02-sdk/adk-runner.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/02-sdk/adk-runner.js:1)
+- [src/02-sdk/model-resolver.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/02-sdk/model-resolver.js:1)
 
 Command:
 
@@ -178,15 +178,15 @@ npm run start:02
 Topics to cover:
 
 - Moving from rule-based logic to an SDK-backed agent
-- Prompt design for routers and specialist agents
+- Prompt design for a single triage agent
 - Returning machine-readable JSON, not prose
 - Model abstraction and fallback behavior
-- Why the repo includes a mock model by default
+- Why one-shot session lifecycle is enough for this demo
 
 What to emphasize:
 
-- `categorizeEmail` is the control point
-- specialist agents have narrow responsibilities
+- `runEphemeral(...)` keeps the ADK example focused on one request/one result
+- this is the monolithic baseline before decomposing the flow in step 03
 - the offline fallback keeps the workshop runnable without API keys
 
 Slide angle:
@@ -194,12 +194,12 @@ Slide angle:
 - "Replace heuristics with structured inference"
 - "Prompting is part of the interface contract"
 
-### Step 03: Orchestration Across Many Emails
+### Step 03: Single-Email Orchestration
 
 Files:
 
 - [src/03-orchestrator/run.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/03-orchestrator/run.js:1)
-- [src/examples/emails.json](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/examples/emails.json:1)
+- [src/03-orchestrator/email-router.js](/Users/paulcodiny/Projects/2026-02-28-holyjs-workshop/src/03-orchestrator/email-router.js:1)
 
 Command:
 
@@ -209,20 +209,22 @@ npm run start:03
 
 Topics to cover:
 
-- Processing a batch instead of one message
-- Collecting aggregate stats
-- Distinguishing per-item execution from orchestration logic
+- Taking one email as orchestrator input
+- Reusing the step 02 ADK agent strictly for classification
+- Handing off to specialized downstream agents after routing
+- Keeping downstream agents narrow: simulated task creation vs simulated no action
+- Why compatibility wrappers can preserve public APIs while simplifying internals
 - Where concurrency, queues, retries, and rate limits would appear in a real system
 
 Suggested slide sequence:
 
-- one email vs many emails
-- per-email agent execution
-- orchestration layer collecting results and metrics
+- one agent vs many agents
+- classifier agent -> specialist action agent
+- orchestration layer coordinating reusable components
 
 Main teaching point:
 
-Multi-agent systems are often simple loops plus good boundaries, not necessarily complex frameworks.
+Multi-agent systems are often simple handoffs between narrowly scoped agents, not necessarily complex frameworks.
 
 ### Step 04: n8n Integration
 

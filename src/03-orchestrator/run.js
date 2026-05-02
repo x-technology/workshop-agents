@@ -1,36 +1,30 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { routeEmail } from '../agents/email-router.js';
+import { SAMPLE_EMAIL } from '../02-sdk/email-input.js';
+import { routeEmail } from './email-router.js';
 
-const emailsPath = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '../examples/emails.json'
-);
+function readSingleEmail() {
+  const raw = process.env.ORCHESTRATOR_EMAIL_JSON;
+  if (!raw) return SAMPLE_EMAIL;
 
-const emails = JSON.parse(fs.readFileSync(emailsPath, 'utf8'));
-
-async function orchestrate(allEmails) {
-  const results = [];
-  const stats = { task: 0, event: 0, no_action: 0 };
-
-  for (const email of allEmails) {
-    const routed = await routeEmail(email);
-    results.push({ id: email.id, ...routed });
-    stats[routed.classification.category] += 1;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') return parsed;
+  } catch {
+    throw new Error('ORCHESTRATOR_EMAIL_JSON must contain valid JSON.');
   }
 
-  return { results, stats };
+  throw new Error('ORCHESTRATOR_EMAIL_JSON must contain one email object.');
 }
 
-orchestrate(emails)
-  .then(out => {
-    console.log('Stats:', out.stats);
-    for (const item of out.results) {
-      console.log(`${item.id}: ${item.classification.category}`);
-    }
-  })
-  .catch(err => {
-    console.error('Error:', err.message);
-    process.exit(1);
-  });
+async function main() {
+  const email = readSingleEmail();
+  const routed = await routeEmail(email);
+
+  console.log('Input email:', email);
+  console.log('Classification:', routed.classification);
+  console.log('Result:', routed.result);
+}
+
+main().catch(err => {
+  console.error('Error:', err.message);
+  process.exit(1);
+});
