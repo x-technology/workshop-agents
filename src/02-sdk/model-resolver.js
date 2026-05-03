@@ -6,6 +6,7 @@ import {
   OPENAI_MODEL,
   PROVIDER
 } from './config.js';
+import { KeywordFallbackLlm } from './fallback-llm.js';
 import { OpenAICompatibleLlm } from './openai-compatible-llm.js';
 
 function hasGeminiKey() {
@@ -21,14 +22,20 @@ export function resolveModel() {
 
   if (provider === 'gemini') {
     if (!hasGeminiKey()) {
-      return { model: null, reason: 'Missing GOOGLE_API_KEY or GEMINI_API_KEY.' };
+      return {
+        model: new KeywordFallbackLlm(),
+        reason: 'Missing GOOGLE_API_KEY or GEMINI_API_KEY. Using keyword fallback model.'
+      };
     }
     return { model: GEMINI_MODEL, reason: null };
   }
 
   if (provider === 'openai') {
     if (!hasOpenAIKey()) {
-      return { model: null, reason: 'Missing OPENAI_API_KEY.' };
+      return {
+        model: new KeywordFallbackLlm(),
+        reason: 'Missing OPENAI_API_KEY. Using keyword fallback model.'
+      };
     }
     return {
       model: new OpenAICompatibleLlm({
@@ -66,5 +73,8 @@ export function resolveModel() {
     };
   }
 
-  return { model: null, reason: 'No model credentials found.' };
+  return {
+    model: new KeywordFallbackLlm(),
+    reason: 'No model credentials found. Using keyword fallback model.'
+  };
 }

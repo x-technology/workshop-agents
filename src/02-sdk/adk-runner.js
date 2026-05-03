@@ -81,6 +81,64 @@ export async function runTriageAgent({ email, model }) {
   });
 }
 
+export async function runTaskCreationSimulationAgent({ email, classification, model }) {
+  return runEmailAgent({
+    model,
+    agentName: 'task_creation_simulation_agent',
+    instruction: [
+      'You simulate creating a task from an actionable email.',
+      'Return JSON only. No markdown, no extra text.',
+      'Output schema:',
+      '{',
+      '  "type": "task",',
+      '  "status": "simulated",',
+      '  "sourceCategory": "task|event",',
+      '  "task": {',
+      '    "title": "...",',
+      '    "next_steps": ["..."],',
+      '    "owner": "...",',
+      '    "due": "..."',
+      '  }',
+      '}'
+    ].join('\n'),
+    promptLines: [
+      'TASK_CREATION_SIMULATION',
+      `Classification: ${classification.category}`,
+      `Reason: ${classification.reason}`,
+      formatEmailForAgent(email)
+    ]
+  });
+}
+
+export async function runAgendaItemSimulationAgent({ email, classification, model }) {
+  return runEmailAgent({
+    model,
+    agentName: 'agenda_item_simulation_agent',
+    instruction: [
+      'You simulate creating an agenda item from an event email.',
+      'Return JSON only. No markdown, no extra text.',
+      'Output schema:',
+      '{',
+      '  "type": "agenda_item",',
+      '  "status": "simulated",',
+      '  "sourceCategory": "event",',
+      '  "agenda_item": {',
+      '    "title": "...",',
+      '    "time": "...",',
+      '    "attendees": ["..."],',
+      '    "location": "..."',
+      '  }',
+      '}'
+    ].join('\n'),
+    promptLines: [
+      'AGENDA_ITEM_SIMULATION',
+      `Classification: ${classification.category}`,
+      `Reason: ${classification.reason}`,
+      formatEmailForAgent(email)
+    ]
+  });
+}
+
 export async function categorizeEmailWithAdk({ email, model }) {
   const responseText = await runClassificationAgent({ email, model });
   const parsed = safeJsonParse(responseText, fallbackClassification(email));

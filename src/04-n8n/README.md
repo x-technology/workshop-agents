@@ -1,11 +1,14 @@
 # n8n custom node
 
-This step ships minimal n8n custom nodes for email routing and reliability monitoring. The main node wraps the router, and the monitor node summarizes per-agent health from the observability trace.
+This step ships minimal n8n custom nodes for visual orchestration. The intended flow is: classify email, branch in n8n, then call either task-creation or agenda-item simulation. The reliability monitor remains available as a later add-on.
 
 ## What you get
 
-- `EmailRouter.node.js` – the node implementation
-- `AgentReliability.node.js` – the reliability summary node
+- `EmailRouter.node.js` – convenience wrapper around the step 03 monolith
+- `EmailClassification.node.js` – classifies emails with the step 02 agent
+- `TaskSimulation.node.js` – simulates task creation for `task` emails
+- `AgendaSimulation.node.js` – simulates agenda item creation for `event` emails
+- `AgentReliability.node.js` – optional success/error summary node for step `05` traces
 - `email-router.svg` – node icon
 - `print-instructions.js` – stages a safe `.n8n/custom` folder for n8n to scan
 
@@ -25,36 +28,54 @@ The node reads each incoming item and accepts any of these payload shapes:
 { "emails": [ { "from": "hr@company.com", "subject": "Team sync", "body": "Invite for tomorrow" } ] }
 ```
 
-For each email, it outputs an item with:
+`Email Router` outputs one item per email with:
 
 ```json
 { "email": { /* original email */ }, "result": { /* routeEmail output */ } }
 ```
 
+`Email Classification Agent` outputs:
+
+```json
+{ "email": { /* original email */ }, "classification": { "category": "task|event|no_action" } }
+```
+
+`Task Simulation Agent` and `Agenda Simulation Agent` output:
+
+```json
+{ "email": { /* original email */ }, "category": "task|event", "result": { /* simulated specialist output */ } }
+```
+
+`Task Simulation Agent` accepts `task` items only. `Agenda Simulation Agent` accepts `event` items only.
+
 ## Local dev setup
 
 1. Run `npm run start:04` from the repo root.
-2. That creates `.n8n/custom/EmailRouter.node.js`, `.n8n/custom/AgentReliability.node.js`, and copies the icon into `.n8n/custom/`.
+2. That creates `.n8n/custom/EmailRouter.node.js`, `.n8n/custom/EmailClassification.node.js`, `.n8n/custom/TaskSimulation.node.js`, `.n8n/custom/AgendaSimulation.node.js`, `.n8n/custom/AgentReliability.node.js`, and copies the icon into `.n8n/custom/`.
 3. Start n8n with `npm run start:n8n`.
-4. Add the “Email Router” and “Agent Reliability Monitor” nodes to your workflow.
+4. Add the “Email Classification Agent”, “Task Simulation Agent”, “Agenda Simulation Agent”, and optionally “Email Router” / “Agent Reliability Monitor” nodes to your workflow.
 
 ## Notes
 
 - This package intentionally keeps the code small and workshop-friendly.
 - The staged custom node file re-exports `EmailRouter` from `src/04-n8n/EmailRouter.node.js`.
+- The staged custom node file also re-exports `EmailClassification` from `src/04-n8n/EmailClassification.node.js`.
+- The staged custom node file also re-exports `TaskSimulation` from `src/04-n8n/TaskSimulation.node.js`.
+- The staged custom node file also re-exports `AgendaSimulation` from `src/04-n8n/AgendaSimulation.node.js`.
 - The staged custom node file also re-exports `AgentReliability` from `src/04-n8n/AgentReliability.node.js`.
-- The node routes emails through `src/05-security-observability/observability.js`, which reuses the step 03 router and action agents.
-- Reliability traces are written to `src/05-security-observability/trace.jsonl` by default.
+- The step 04 nodes reuse the step 02 agents directly, or the step 03 router in the `Email Router` shortcut node.
+- `Agent Reliability Monitor` does not add observability by itself. It only reads traces written by the step `05` wrappers.
 
 ## Suggested workflow
 
 1. Trigger with a Manual Trigger, Webhook, or test payload.
-2. Send email JSON into `Email Router`.
-3. Leave `Write Reliability Trace` enabled so each router/specialist run is appended to the trace log.
-4. Feed a later branch into `Agent Reliability Monitor` to read the trace and emit one item per agent with:
+2. Send email JSON into `Email Classification Agent`.
+3. Add an IF/Switch node in n8n and branch on `classification.category`.
+4. Route `task` items into `Task Simulation Agent`.
+5. Route `event` items into `Agenda Simulation Agent`.
+6. Keep `Email Router` only as a shortcut when you want the step 03 monolith behavior inside n8n.
+7. Feed a later branch into `Agent Reliability Monitor` to read the trace and emit one item per agent with:
    - success and failure counts
-   - blocked prompt injection counts
-   - average latency
    - reliability ratio
 
 ## Steps to execute

@@ -53,34 +53,58 @@ export function fallbackRoute(email) {
   if (classification.category === 'event') {
     return {
       classification,
-      result: {
-        type: 'event',
-        title: 'Follow-up meeting',
-        time: 'tomorrow 10:00',
-        attendees: ['you', 'sender'],
-        location: 'video call'
-      }
+      result: fallbackAgendaItemSimulation(email, classification)
     };
   }
 
   if (classification.category === 'task') {
     return {
       classification,
-      result: {
-        type: 'task',
-        title: 'Follow up on the client request',
-        next_steps: ['Reply with confirmation', 'Schedule the call'],
-        owner: 'you',
-        due: 'next week'
-      }
+      result: fallbackTaskSimulation(email, classification)
     };
   }
 
   return {
     classification,
-    result: {
-      type: 'no_action',
-      summary: 'Informational update, no action required.'
+    result: fallbackNoActionSimulation(email)
+  };
+}
+
+export function fallbackTaskSimulation(email, classification = fallbackClassification(email)) {
+  const subject = email.subject ?? 'Untitled email';
+
+  return {
+    type: 'task',
+    status: 'simulated',
+    sourceCategory: classification.category,
+    task: {
+      title: `Follow up: ${subject}`,
+      next_steps: ['Reply to the sender', 'Track the requested follow-up'],
+      owner: 'you',
+      due: 'next workday'
     }
+  };
+}
+
+export function fallbackAgendaItemSimulation(email, classification = fallbackClassification(email)) {
+  const subject = email.subject ?? 'Untitled event';
+
+  return {
+    type: 'agenda_item',
+    status: 'simulated',
+    sourceCategory: classification.category,
+    agenda_item: {
+      title: subject,
+      time: 'tomorrow 10:00',
+      attendees: ['you', 'sender'],
+      location: 'video call'
+    }
+  };
+}
+
+export function fallbackNoActionSimulation(email) {
+  return {
+    type: 'no_action',
+    summary: `Informational update, no action required for "${email.subject ?? 'this email'}".`
   };
 }

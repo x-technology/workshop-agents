@@ -10,7 +10,7 @@ export class AgentReliability {
     icon: 'file:email-router.svg',
     group: ['transform'],
     version: 1,
-    description: 'Summarize per-agent reliability and latency from the observability trace',
+    description: 'Summarize per-agent success/error rate from the observability trace',
     defaults: {
       name: 'Agent Reliability Monitor'
     },

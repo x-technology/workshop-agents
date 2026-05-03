@@ -1,5 +1,5 @@
 import n8nWorkflow from 'n8n-workflow/dist/cjs/index.js';
-import { secureRouteWithMonitor } from '../05-security-observability/observability.js';
+import { routeEmail } from '../03-orchestrator/email-router.js';
 
 const { NodeConnectionTypes, NodeOperationError } = n8nWorkflow;
 
@@ -23,37 +23,7 @@ export class EmailRouter {
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
-    properties: [
-      {
-        displayName: 'Block Prompt Injection',
-        name: 'blockPromptInjection',
-        type: 'boolean',
-        default: true,
-        description: 'Reject emails that try to override agent instructions'
-      },
-      {
-        displayName: 'Write Reliability Trace',
-        name: 'writeTrace',
-        type: 'boolean',
-        default: true,
-        description: 'Append per-agent execution events to the observability trace file'
-      },
-      {
-        displayName: 'Include Monitor Data',
-        name: 'includeMonitor',
-        type: 'boolean',
-        default: true,
-        description: 'Return per-run agent timings and reliability fields in the node output'
-      },
-      {
-        displayName: 'Trace Path',
-        name: 'tracePath',
-        type: 'string',
-        default: '',
-        placeholder: 'src/05-security-observability/trace.jsonl',
-        description: 'Optional absolute or repo-relative path for the trace log'
-      }
-    ]
+    properties: []
   };
 
   async execute() {
@@ -63,10 +33,6 @@ export class EmailRouter {
     for (let itemIndex = 0; itemIndex < items.length; itemIndex += 1) {
       const payload = items[itemIndex].json ?? {};
       const emails = normalizePayload(payload);
-      const blockPromptInjection = this.getNodeParameter('blockPromptInjection', itemIndex);
-      const writeTrace = this.getNodeParameter('writeTrace', itemIndex);
-      const includeMonitor = this.getNodeParameter('includeMonitor', itemIndex);
-      const tracePath = this.getNodeParameter('tracePath', itemIndex);
 
       if (emails.length === 0) {
         const error = new NodeOperationError(
@@ -88,30 +54,23 @@ export class EmailRouter {
 
       for (const email of emails) {
         try {
-          const monitored = await secureRouteWithMonitor(email, {
-            blockPromptInjection,
-            writeTrace,
-            tracePath
-          });
+          const result = await routeEmail(email);
 
           outputItems.push({
             json: {
               email,
-              result: monitored.result,
-              ...(includeMonitor ? { monitor: monitored.monitor } : {})
+              result
             },
             pairedItem: { item: itemIndex }
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
-          const monitor = error?.monitor;
 
           if (this.continueOnFail()) {
             outputItems.push({
               json: {
                 email,
-                error: message,
-                ...(monitor ? { monitor } : {})
+                error: message
               },
               pairedItem: { item: itemIndex }
             });

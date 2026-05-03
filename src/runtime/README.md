@@ -1,6 +1,6 @@
 # Runtime model
 
-The workshop keeps a minimal runtime model for the theory section, but the practical flow uses the AI SDK and the Google ADK.
+The workshop keeps a minimal runtime model for the theory section. Step `01` also reuses this folder for small runtime-adjacent utilities such as tracing and the OpenAI-compatible HTTP helper.
 
 Topics to cover:
 
