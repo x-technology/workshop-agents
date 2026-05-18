@@ -46,4 +46,4 @@ console.log(
   'Prepared .n8n/custom for the Email Router, Email Classification Agent, Task Simulation Agent, Agenda Simulation Agent, and Agent Reliability Monitor nodes.',
 );
 console.log('Start n8n with:');
-console.log('npm run start:n8n');
+console.log('npm run n8n');

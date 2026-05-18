@@ -1,4 +1,4 @@
-# HolyJS 2026 Agent Runtime Workshop
+# JS Nation 2026 Agent Runtime Workshop
 
 This folder contains runnable code samples that map to the workshop plan. The practical flow is built around an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to downstream agents.
 
@@ -7,7 +7,7 @@ Step `01` uses a direct OpenAI-compatible HTTP call with no SDK, and falls back 
 ## Quick start
 
 ```bash
-cd 2026-02-28-holyjs-workshop
+cd 2026-02-28-jsnation-workshop
 node -v
 npm install
 npm run start:01

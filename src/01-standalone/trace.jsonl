@@ -1,0 +1,6 @@
+{"type":"run.start","id":"run-1","time":1779108772728,"meta":{"agent":"01-standalone","emailId":"email-1","mode":"fallback"}}
+{"type":"run.end","id":"run-1","time":1779108772729,"meta":{"status":"ok","result":{"category":"task","reason":"Keyword fallback matched task-oriented language."}}}
+{"type":"run.start","id":"run-2","time":1779108772729,"meta":{"agent":"01-standalone","emailId":"email-2","mode":"fallback"}}
+{"type":"run.end","id":"run-2","time":1779108772729,"meta":{"status":"ok","result":{"category":"event","reason":"Keyword fallback matched meeting/invite/calendar language."}}}
+{"type":"run.start","id":"run-3","time":1779108772729,"meta":{"agent":"01-standalone","emailId":"email-3","mode":"fallback"}}
+{"type":"run.end","id":"run-3","time":1779108772729,"meta":{"status":"ok","result":{"category":"no_action","reason":"Keyword fallback found no task or event signals."}}}

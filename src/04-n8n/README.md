@@ -90,7 +90,7 @@ The node reads each incoming item and accepts any of these payload shapes:
 
 1. Run `npm run start:04` from the repo root.
 2. That creates `.n8n/custom/EmailRouter.node.js`, `.n8n/custom/EmailClassification.node.js`, `.n8n/custom/TaskSimulation.node.js`, `.n8n/custom/AgendaSimulation.node.js`, `.n8n/custom/AgentReliability.node.js`, and copies the icon into `.n8n/custom/`.
-3. Start n8n with `npm run start:n8n`.
+3. Start n8n with `npm run n8n`.
 4. Add the “Email Classification Agent”, “Task Simulation Agent”, “Agenda Simulation Agent”, and optionally “Email Router” / “Agent Reliability Monitor” nodes to your workflow.
 
 ## Notes
@@ -119,14 +119,14 @@ The node reads each incoming item and accepts any of these payload shapes:
 ## Steps to execute
 
 ```bash
-npm run start:n8n
+npm run n8n
 ```
 
 To stage the custom node locally:
 
 ```bash
 npm run start:04
-npm run start:n8n
+npm run n8n
 ```
 
 ## Troubleshooting
@@ -138,7 +138,7 @@ Do not point it at a linked package with a `node_modules` tree inside. If you do
 that, n8n will try to load dependency files such as `pkce-challenge/dist/index.node.js`
 as workflow nodes and fail during startup.
 
-`npm run start:n8n` avoids this by forcing `N8N_USER_FOLDER` to the repository
+`npm run n8n` avoids this by forcing `N8N_USER_FOLDER` to the repository
 root, so n8n uses this repo's `.n8n/custom` folder as its built-in custom
 extension directory and does not scan `~/.n8n/custom`.
 
@@ -146,7 +146,7 @@ If you already hit that problem, remove the linked custom package and restage
 the local scan directory:
 
 ```bash
-rm -rf "$HOME/.n8n/custom/node_modules/holyjs-agent-runtime-workshop"
+rm -rf "$HOME/.n8n/custom/node_modules/jsnation-agent-runtime-workshop"
 npm run start:04
-npm run start:n8n
+npm run n8n
 ```

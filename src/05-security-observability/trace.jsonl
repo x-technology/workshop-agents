@@ -1,3 +1,3 @@
-{"time":"2026-05-05T15:04:36.749Z","event":"agent.completed","data":{"agent":"classifyEmailAgent","status":"success","durationMs":8}}
-{"time":"2026-05-05T15:04:36.754Z","event":"agent.completed","data":{"agent":"createTaskAgent","status":"success","durationMs":3}}
-{"time":"2026-05-05T15:04:36.754Z","event":"agent.failed","data":{"agent":"classifyEmailAgent","status":"failure","durationMs":0,"error":"Blocked prompt injection attempt"}}
+{"time":"2026-05-18T13:20:26.709Z","event":"agent.completed","data":{"agent":"classifyEmailAgent","status":"success","durationMs":6}}
+{"time":"2026-05-18T13:20:26.712Z","event":"agent.completed","data":{"agent":"createTaskAgent","status":"success","durationMs":1}}
+{"time":"2026-05-18T13:20:26.713Z","event":"agent.failed","data":{"agent":"classifyEmailAgent","status":"failure","durationMs":1,"error":"Blocked prompt injection attempt"}}

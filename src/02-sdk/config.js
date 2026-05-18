@@ -1,4 +1,4 @@
-export const APP_NAME = 'holyjs_adk_workshop';
+export const APP_NAME = 'jsnation_adk_workshop';
 export const USER_ID = 'workshop_user';
 export const SESSION_ID = 'session_02_sdk';
 

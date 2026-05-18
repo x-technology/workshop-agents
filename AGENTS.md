@@ -833,7 +833,7 @@ Run:
 
 ```bash
 npm run start:04
-npm run start:n8n
+npm run n8n
 ```
 
 Suggested workflow:

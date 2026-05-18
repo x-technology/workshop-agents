@@ -1,4 +1,4 @@
-# LLM Context: HolyJS 2026 Agent Runtime Workshop
+# LLM Context: JS Nation 2026 Agent Runtime Workshop
 
 This repository is a workshop project for building agent runtimes in Node.js. The practical flow demonstrates an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to specialized agents. Step `01` uses a direct OpenAI-compatible HTTP call without any SDK and falls back to naive keyword routing when `OPENAI_API_KEY` is not set. Step `02` focuses on one reusable classifier agent through the Google ADK. The Google ADK demo uses Gemini when `GOOGLE_API_KEY` or `GEMINI_API_KEY` is set, otherwise it falls back locally through a keyword-based `BaseLlm`.
 
@@ -12,7 +12,7 @@ This repository is a workshop project for building agent runtimes in Node.js. Th
 ## Quick start
 
 ```bash
-cd /Users/paulcodiny/Projects/2026-02-28-holyjs-workshop
+cd /Users/paulcodiny/Projects/2026-02-28-jsnation-workshop
 npm install
 npm run start:01
 ```
