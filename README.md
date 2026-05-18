@@ -15,23 +15,23 @@ npm run start:01
 
 ## Mapping to the agenda
 
-1. Теория про агентов. Что такое вообще
+1. Agent theory. What they are in general
    - See `src/runtime/README.md` for the runtime model and architecture notes.
-2. Разработка агента "на коленке"
+2. Developing a simple agent
    - Run `npm run start:01` and open `src/01-standalone/run.js`.
-3. Теория про SDK для агентов
+3. Agent SDK theory
    - See `src/02-sdk/README.md` for the Google ADK overview.
-4. Разработка агента на SDK
+4. Developing an agent using the SDK
    - Run `npm run start:02` and open `src/02-sdk/run.js`.
-5. Теория про оркестрацию. Что делать, когда агентов несколько
+5. Orchestration theory. What to do when there are multiple agents
    - Run `npm run start:03` and open `src/03-orchestrator/run.js`.
-6. Разработка ещё одного-двух агентов и встраивание его в n8n
+6. Developing one or two more agents and integrating them into n8n
    - Run `npm run start:04` and open `src/04-n8n/README.md`.
-7. Теория общих правил оркестрации. Безопасность, мониторинг и т.д.
+7. Theory of general orchestration rules. Security, monitoring, etc.
    - Run `npm run start:05` and open `src/05-security-observability/run.js`.
-8. Практика
+8. Practice
    - Use `src/examples/` for exercises and tasks.
-9. Конец
+9. End
 
 ## Structure
 
