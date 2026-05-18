@@ -2,7 +2,7 @@
 
 This folder contains runnable code samples that map to the workshop plan. The practical flow is built around an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to downstream agents.
 
-Step `01` uses a direct OpenAI-compatible HTTP call with no SDK, and falls back to naive keyword routing when `OPENAI_API_KEY` is not set. Step `02` uses the Google ADK (`@google/adk`) to define reusable agents. Later steps reuse those same agents for orchestration, n8n, and wrapper-based production concerns.
+Step `01` uses a direct OpenAI-compatible HTTP call with no SDK, and falls back to naive keyword routing when `OPENAI_API_KEY` is not set. Step `02` uses the Google ADK (`@google/adk`) for one classifier agent. Later steps build specialist agents and orchestration around that classifier.
 
 ## Quick start
 
@@ -36,9 +36,9 @@ npm run start:01
 ## Structure
 
 - `src/01-standalone/` raw LLM email triage over HTTP without an SDK
-- `src/02-sdk/` Google ADK agents: classify email, simulate task creation, simulate agenda item creation
-- `src/03-orchestrator/` monolithic single-file orchestration over the step 02 agents
-- `src/04-n8n/` n8n integration nodes for visual orchestration over the step 02 agents
+- `src/02-sdk/` Google ADK classifier agent
+- `src/03-orchestrator/` specialist agents plus monolithic orchestration over the step 02 classifier
+- `src/04-n8n/` n8n integration nodes for visual orchestration over the step 02 classifier and step 03 specialists
 - `src/05-security-observability/` wrappers for prompt-injection checks and success/error observability
 - `src/examples/` practice tasks and sample emails
 - `src/runtime/` runtime model notes (kept for theory section)
@@ -49,6 +49,6 @@ npm run start:01
 - Step `01` uses a real model when `OPENAI_API_KEY` is set, otherwise it falls back to naive keyword routing.
 - Step `02` stays on the ADK code path even without credentials by using a local keyword-based `BaseLlm` fallback.
 - Step `02` also supports Gemini, OpenAI, or a local OpenAI-compatible endpoint via `SDK_PROVIDER`; see `src/02-sdk/README.md`.
-- Step `03` is intentionally monolithic and reuses the step `02` agents from one file.
-- Step `04` reuses the same step `02` agents in n8n nodes, plus the step `03` router as a shortcut node.
-- Step `05` wraps existing agents for prompt-injection blocking and success/error monitoring instead of re-implementing routing.
+- Step `03` is intentionally monolithic and adds specialist agents around the step `02` classifier.
+- Step `04` reuses the step `02` classifier and the step `03` specialists in n8n nodes, plus the step `03` router as a shortcut node.
+- Step `05` wraps the step `02` classifier and step `03` specialists for prompt-injection blocking and success/error monitoring instead of re-implementing routing.

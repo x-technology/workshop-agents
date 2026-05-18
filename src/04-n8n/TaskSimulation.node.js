@@ -1,19 +1,16 @@
 import n8nWorkflow from 'n8n-workflow/dist/cjs/index.js';
-import { createTaskAgent } from '../02-sdk/agents.js';
+import { createTaskAgent } from '../03-orchestrator/agents.js';
 
 const { NodeConnectionTypes, NodeOperationError } = n8nWorkflow;
 
 function normalizeTaskSimulationInput(payload) {
   const email = payload.email ?? (payload.subject || payload.body || payload.from ? payload : null);
   const category =
-    payload.classification?.category ??
-    payload.result?.classification?.category ??
-    payload.category ??
-    'task';
+    payload.classification?.category ?? payload.result?.classification?.category ?? payload.category ?? 'task';
 
   return {
     email,
-    category
+    category,
   };
 }
 
@@ -26,11 +23,11 @@ export class TaskSimulation {
     version: 1,
     description: 'Simulate task creation for emails classified as task',
     defaults: {
-      name: 'Task Simulation Agent'
+      name: 'Task Simulation Agent',
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
-    properties: []
+    properties: [],
   };
 
   async execute() {
@@ -42,16 +39,12 @@ export class TaskSimulation {
       const { email, category } = normalizeTaskSimulationInput(payload);
 
       if (!email) {
-        const error = new NodeOperationError(
-          this.getNode(),
-          'No email payload found on item',
-          { itemIndex }
-        );
+        const error = new NodeOperationError(this.getNode(), 'No email payload found on item', { itemIndex });
 
         if (this.continueOnFail()) {
           outputItems.push({
             json: { error: error.message },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }
@@ -60,20 +53,18 @@ export class TaskSimulation {
       }
 
       if (category !== 'task') {
-        const error = new NodeOperationError(
-          this.getNode(),
-          'Task Simulation Agent only supports task category',
-          { itemIndex }
-        );
+        const error = new NodeOperationError(this.getNode(), 'Task Simulation Agent only supports task category', {
+          itemIndex,
+        });
 
         if (this.continueOnFail()) {
           outputItems.push({
             json: {
               email,
               category,
-              error: error.message
+              error: error.message,
             },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }
@@ -84,16 +75,16 @@ export class TaskSimulation {
       try {
         const result = await createTaskAgent({
           email,
-          classification: { category }
+          classification: { category },
         });
 
         outputItems.push({
           json: {
             email,
             category,
-            result
+            result,
           },
-          pairedItem: { item: itemIndex }
+          pairedItem: { item: itemIndex },
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -103,9 +94,9 @@ export class TaskSimulation {
             json: {
               email,
               category,
-              error: message
+              error: message,
             },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }

@@ -7,5 +7,5 @@ export const tools = {
   echo,
   summarize,
   readFile,
-  httpGet
+  httpGet,
 };

@@ -10,24 +10,24 @@ const customDir = path.join(repoRoot, '.n8n', 'custom');
 const shimFiles = [
   {
     fileName: 'EmailRouter.node.js',
-    source: "export { EmailRouter } from '../../src/04-n8n/EmailRouter.node.js';\n"
+    source: "export { EmailRouter } from '../../src/04-n8n/EmailRouter.node.js';\n",
   },
   {
     fileName: 'EmailClassification.node.js',
-    source: "export { EmailClassification } from '../../src/04-n8n/EmailClassification.node.js';\n"
+    source: "export { EmailClassification } from '../../src/04-n8n/EmailClassification.node.js';\n",
   },
   {
     fileName: 'TaskSimulation.node.js',
-    source: "export { TaskSimulation } from '../../src/04-n8n/TaskSimulation.node.js';\n"
+    source: "export { TaskSimulation } from '../../src/04-n8n/TaskSimulation.node.js';\n",
   },
   {
     fileName: 'AgendaSimulation.node.js',
-    source: "export { AgendaSimulation } from '../../src/04-n8n/AgendaSimulation.node.js';\n"
+    source: "export { AgendaSimulation } from '../../src/04-n8n/AgendaSimulation.node.js';\n",
   },
   {
     fileName: 'AgentReliability.node.js',
-    source: "export { AgentReliability } from '../../src/04-n8n/AgentReliability.node.js';\n"
-  }
+    source: "export { AgentReliability } from '../../src/04-n8n/AgentReliability.node.js';\n",
+  },
 ];
 
 async function prepareCustomExtension() {
@@ -37,14 +37,13 @@ async function prepareCustomExtension() {
     await writeFile(path.join(customDir, shimFile.fileName), shimFile.source, 'utf8');
   }
 
-  await copyFile(
-    path.join(stepDir, 'email-router.svg'),
-    path.join(customDir, 'email-router.svg')
-  );
+  await copyFile(path.join(stepDir, 'email-router.svg'), path.join(customDir, 'email-router.svg'));
 }
 
 await prepareCustomExtension();
 
-console.log('Prepared .n8n/custom for the Email Router, Email Classification Agent, Task Simulation Agent, Agenda Simulation Agent, and Agent Reliability Monitor nodes.');
+console.log(
+  'Prepared .n8n/custom for the Email Router, Email Classification Agent, Task Simulation Agent, Agenda Simulation Agent, and Agent Reliability Monitor nodes.',
+);
 console.log('Start n8n with:');
 console.log('npm run start:n8n');

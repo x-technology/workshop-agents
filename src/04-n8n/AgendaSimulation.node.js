@@ -1,19 +1,16 @@
 import n8nWorkflow from 'n8n-workflow/dist/cjs/index.js';
-import { createAgendaItemAgent } from '../02-sdk/agents.js';
+import { createAgendaItemAgent } from '../03-orchestrator/agents.js';
 
 const { NodeConnectionTypes, NodeOperationError } = n8nWorkflow;
 
 function normalizeAgendaSimulationInput(payload) {
   const email = payload.email ?? (payload.subject || payload.body || payload.from ? payload : null);
   const category =
-    payload.classification?.category ??
-    payload.result?.classification?.category ??
-    payload.category ??
-    'event';
+    payload.classification?.category ?? payload.result?.classification?.category ?? payload.category ?? 'event';
 
   return {
     email,
-    category
+    category,
   };
 }
 
@@ -26,11 +23,11 @@ export class AgendaSimulation {
     version: 1,
     description: 'Simulate agenda item creation for emails classified as event',
     defaults: {
-      name: 'Agenda Simulation Agent'
+      name: 'Agenda Simulation Agent',
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
-    properties: []
+    properties: [],
   };
 
   async execute() {
@@ -42,16 +39,12 @@ export class AgendaSimulation {
       const { email, category } = normalizeAgendaSimulationInput(payload);
 
       if (!email) {
-        const error = new NodeOperationError(
-          this.getNode(),
-          'No email payload found on item',
-          { itemIndex }
-        );
+        const error = new NodeOperationError(this.getNode(), 'No email payload found on item', { itemIndex });
 
         if (this.continueOnFail()) {
           outputItems.push({
             json: { error: error.message },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }
@@ -60,20 +53,18 @@ export class AgendaSimulation {
       }
 
       if (category !== 'event') {
-        const error = new NodeOperationError(
-          this.getNode(),
-          'Agenda Simulation Agent only supports event category',
-          { itemIndex }
-        );
+        const error = new NodeOperationError(this.getNode(), 'Agenda Simulation Agent only supports event category', {
+          itemIndex,
+        });
 
         if (this.continueOnFail()) {
           outputItems.push({
             json: {
               email,
               category,
-              error: error.message
+              error: error.message,
             },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }
@@ -84,16 +75,16 @@ export class AgendaSimulation {
       try {
         const result = await createAgendaItemAgent({
           email,
-          classification: { category }
+          classification: { category },
         });
 
         outputItems.push({
           json: {
             email,
             category,
-            result
+            result,
           },
-          pairedItem: { item: itemIndex }
+          pairedItem: { item: itemIndex },
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -103,9 +94,9 @@ export class AgendaSimulation {
             json: {
               email,
               category,
-              error: message
+              error: message,
             },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }

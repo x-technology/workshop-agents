@@ -11,7 +11,7 @@ export class Planner {
 
     return {
       task,
-      steps: llmOutput.steps
+      steps: llmOutput.steps,
     };
   }
 }

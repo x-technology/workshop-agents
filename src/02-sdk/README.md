@@ -1,23 +1,21 @@
 # Google ADK (Agent Development Kit)
 
-This step uses the Google ADK (`@google/adk`) to run a small set of reusable email agents.
+This step uses the Google ADK (`@google/adk`) to run one focused email-classification agent.
 
 - Uses an `LlmAgent` + `InMemoryRunner` for a minimal, inspectable flow.
 - Uses `runner.runEphemeral(...)` because the demo only needs a one-shot session per email.
 - Keeps prompts and parsing explicit for teaching purposes.
 - The script uses Gemini when a key is present and otherwise falls back to a local keyword-based `BaseLlm` implementation, so the ADK path stays the same.
 
-The step exposes three reusable agent roles:
+The step exposes one agent role:
 
 - classify email as `task`, `event`, or `no_action`
-- simulate task creation for actionable emails
-- simulate agenda item creation for event emails
 
-These agents are reused directly by:
+That classifier is reused directly by:
 
 - `src/03-orchestrator/` for the monolithic orchestration example
 - `src/04-n8n/` for the visual workflow example
-- `src/05-security-observability/` after wrapping them with guardrails and monitoring
+- `src/05-security-observability/` before specialist wrappers are applied
 
 ## Model selection
 

@@ -4,7 +4,7 @@ import {
   fallbackClassification,
   fallbackRoute,
   fallbackTaskSimulation,
-  normalizeClassification
+  normalizeClassification,
 } from './fallback.js';
 
 function normalizeParts(parts) {
@@ -51,7 +51,7 @@ function buildEmailFromPrompt(prompt) {
   return {
     from: sections.get('From') ?? 'unknown',
     subject: sections.get('Subject') ?? '',
-    body: sections.get('Body') ?? ''
+    body: sections.get('Body') ?? '',
   };
 }
 
@@ -60,9 +60,9 @@ function buildClassificationFromPrompt(prompt, email) {
   return normalizeClassification(
     {
       category: sections.get('Classification'),
-      reason: sections.get('Reason')
+      reason: sections.get('Reason'),
     },
-    email
+    email,
   );
 }
 
@@ -110,7 +110,7 @@ export class KeywordFallbackLlm extends BaseLlm {
       },
       async *receive() {
         yield* llm.generateContentAsync({ ...baseRequest, contents: history }, false);
-      }
+      },
     };
   }
 
@@ -121,8 +121,8 @@ export class KeywordFallbackLlm extends BaseLlm {
     yield {
       content: {
         role: 'model',
-        parts: [{ text }]
-      }
+        parts: [{ text }],
+      },
     };
   }
 }

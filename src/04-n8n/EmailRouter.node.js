@@ -19,11 +19,11 @@ export class EmailRouter {
     version: 1,
     description: 'Classify emails as task, event, or no_action',
     defaults: {
-      name: 'Email Router'
+      name: 'Email Router',
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
-    properties: []
+    properties: [],
   };
 
   async execute() {
@@ -35,16 +35,12 @@ export class EmailRouter {
       const emails = normalizePayload(payload);
 
       if (emails.length === 0) {
-        const error = new NodeOperationError(
-          this.getNode(),
-          'No email payload found on item',
-          { itemIndex }
-        );
+        const error = new NodeOperationError(this.getNode(), 'No email payload found on item', { itemIndex });
 
         if (this.continueOnFail()) {
           outputItems.push({
             json: { error: error.message },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }
@@ -59,9 +55,9 @@ export class EmailRouter {
           outputItems.push({
             json: {
               email,
-              result
+              result,
             },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
         } catch (error) {
           const message = error instanceof Error ? error.message : String(error);
@@ -70,9 +66,9 @@ export class EmailRouter {
             outputItems.push({
               json: {
                 email,
-                error: message
+                error: message,
               },
-              pairedItem: { item: itemIndex }
+              pairedItem: { item: itemIndex },
             });
             continue;
           }

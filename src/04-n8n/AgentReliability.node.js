@@ -12,7 +12,7 @@ export class AgentReliability {
     version: 1,
     description: 'Summarize per-agent success/error rate from the observability trace',
     defaults: {
-      name: 'Agent Reliability Monitor'
+      name: 'Agent Reliability Monitor',
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
@@ -23,9 +23,9 @@ export class AgentReliability {
         type: 'string',
         default: '',
         placeholder: 'src/05-security-observability/trace.jsonl',
-        description: 'Optional absolute or repo-relative path for the trace log'
-      }
-    ]
+        description: 'Optional absolute or repo-relative path for the trace log',
+      },
+    ],
   };
 
   async execute() {
@@ -37,16 +37,18 @@ export class AgentReliability {
       const summary = summarizeReliability(tracePath);
       const pairedItem = items.length > 0 ? { item: 0 } : undefined;
 
-      return [summary.agents.map(agent => ({
-        json: {
-          ...agent,
-          tracePath: summary.tracePath,
-          generatedAt: summary.generatedAt,
-          totalEvents: summary.totalEvents,
-          totalEmails: summary.totalEmails
-        },
-        ...(pairedItem ? { pairedItem } : {})
-      }))];
+      return [
+        summary.agents.map(agent => ({
+          json: {
+            ...agent,
+            tracePath: summary.tracePath,
+            generatedAt: summary.generatedAt,
+            totalEvents: summary.totalEvents,
+            totalEmails: summary.totalEmails,
+          },
+          ...(pairedItem ? { pairedItem } : {}),
+        })),
+      ];
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       throw new NodeOperationError(this.getNode(), message, { itemIndex });

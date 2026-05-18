@@ -29,7 +29,14 @@ export function createTrace({ logPath } = {}) {
     startSpan(runId, name, meta) {
       const spanId = `${runId}-span-${runs.get(runId).spans.length + 1}`;
       runs.get(runId).spans.push({ spanId, name, meta });
-      const entry = { type: 'span.start', runId, spanId, time: Date.now(), name, meta };
+      const entry = {
+        type: 'span.start',
+        runId,
+        spanId,
+        time: Date.now(),
+        name,
+        meta,
+      };
       writeLog(entry);
       return spanId;
     },
@@ -42,6 +49,6 @@ export function createTrace({ logPath } = {}) {
     log(runId, event, meta) {
       const entry = { type: 'event', runId, time: Date.now(), event, meta };
       writeLog(entry);
-    }
+    },
   };
 }

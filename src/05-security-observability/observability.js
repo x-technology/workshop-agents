@@ -62,10 +62,7 @@ export function withPromptInjectionGuard(agentFn) {
 }
 
 export function withSuccessErrorMonitoring(agentName, agentFn, options = {}) {
-  const {
-    writeTrace = true,
-    tracePath: configuredTracePath = ''
-  } = options;
+  const { writeTrace = true, tracePath: configuredTracePath = '' } = options;
 
   const tracePath = resolveTracePath(configuredTracePath);
 
@@ -78,7 +75,7 @@ export function withSuccessErrorMonitoring(agentName, agentFn, options = {}) {
         appendTrace(tracePath, 'agent.completed', {
           agent: agentName,
           status: 'success',
-          durationMs: Date.now() - startedAt
+          durationMs: Date.now() - startedAt,
         });
       }
       return result;
@@ -88,7 +85,7 @@ export function withSuccessErrorMonitoring(agentName, agentFn, options = {}) {
           agent: agentName,
           status: 'failure',
           durationMs: Date.now() - startedAt,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         });
       }
       throw error;
@@ -123,7 +120,7 @@ export function summarizeReliability(tracePath = '') {
       successCount: 0,
       failureCount: 0,
       totalRuns: 0,
-      lastEventTime: null
+      lastEventTime: null,
     };
 
     current.totalRuns += 1;
@@ -141,9 +138,7 @@ export function summarizeReliability(tracePath = '') {
   const items = Array.from(agents.values())
     .map(agent => ({
       ...agent,
-      reliability: agent.totalRuns > 0
-        ? Number((agent.successCount / agent.totalRuns).toFixed(3))
-        : 0
+      reliability: agent.totalRuns > 0 ? Number((agent.successCount / agent.totalRuns).toFixed(3)) : 0,
     }))
     .sort((a, b) => a.agent.localeCompare(b.agent));
 
@@ -152,6 +147,6 @@ export function summarizeReliability(tracePath = '') {
     generatedAt: new Date().toISOString(),
     totalEvents: entries.length,
     totalEmails: 0,
-    agents: items
+    agents: items,
   };
 }

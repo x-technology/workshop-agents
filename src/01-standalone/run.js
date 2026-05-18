@@ -1,15 +1,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createTrace } from '../runtime/tracer.js';
-import {
-  createJsonCompletion,
-  resolveOpenAICompatibleConfig
-} from '../runtime/openai-compatible.js';
+import { createJsonCompletion, resolveOpenAICompatibleConfig } from '../runtime/openai-compatible.js';
 
-const tracePath = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  './trace.jsonl'
-);
+const tracePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), './trace.jsonl');
 
 const tracer = createTrace({ logPath: tracePath });
 
@@ -18,20 +12,20 @@ const emails = [
     id: 'email-1',
     from: 'ceo@company.com',
     subject: 'Please review the Q1 roadmap',
-    body: 'Can you review the Q1 roadmap and send feedback by Friday?'
+    body: 'Can you review the Q1 roadmap and send feedback by Friday?',
   },
   {
     id: 'email-2',
     from: 'hr@company.com',
     subject: 'Team sync tomorrow',
-    body: 'Inviting you to a team sync meeting tomorrow at 10:00 via Zoom.'
+    body: 'Inviting you to a team sync meeting tomorrow at 10:00 via Zoom.',
   },
   {
     id: 'email-3',
     from: 'newsletter@product.com',
     subject: 'Weekly digest',
-    body: 'Here are the latest updates from the product team.'
-  }
+    body: 'Here are the latest updates from the product team.',
+  },
 ];
 
 const routeSchema = {
@@ -40,13 +34,13 @@ const routeSchema = {
   properties: {
     category: {
       type: 'string',
-      enum: ['task', 'event', 'no_action']
+      enum: ['task', 'event', 'no_action'],
     },
     reason: {
-      type: 'string'
-    }
+      type: 'string',
+    },
   },
-  required: ['category', 'reason']
+  required: ['category', 'reason'],
 };
 
 function naiveCategorize(email) {
@@ -54,25 +48,25 @@ function naiveCategorize(email) {
   if (text.includes('meeting') || text.includes('invite') || text.includes('calendar')) {
     return {
       category: 'event',
-      reason: 'Keyword fallback matched meeting/invite/calendar language.'
+      reason: 'Keyword fallback matched meeting/invite/calendar language.',
     };
   }
   if (text.includes('please') || text.includes('review') || text.includes('action')) {
     return {
       category: 'task',
-      reason: 'Keyword fallback matched task-oriented language.'
+      reason: 'Keyword fallback matched task-oriented language.',
     };
   }
   return {
     category: 'no_action',
-    reason: 'Keyword fallback found no task or event signals.'
+    reason: 'Keyword fallback found no task or event signals.',
   };
 }
 
 async function routeWithLlm(email) {
   const runId = tracer.startRun({
     agent: '01-standalone',
-    emailId: email.id
+    emailId: email.id,
   });
 
   try {
@@ -85,7 +79,7 @@ async function routeWithLlm(email) {
         'Return compact JSON only.',
       user: JSON.stringify(email),
       schema: routeSchema,
-      schemaName: 'email_route'
+      schemaName: 'email_route',
     });
 
     tracer.endRun(runId, { status: 'ok', result });
@@ -93,7 +87,7 @@ async function routeWithLlm(email) {
   } catch (error) {
     tracer.endRun(runId, {
       status: 'error',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     throw error;
   }
@@ -103,7 +97,7 @@ function routeWithFallback(email) {
   const runId = tracer.startRun({
     agent: '01-standalone',
     emailId: email.id,
-    mode: 'fallback'
+    mode: 'fallback',
   });
 
   try {
@@ -113,7 +107,7 @@ function routeWithFallback(email) {
   } catch (error) {
     tracer.endRun(runId, {
       status: 'error',
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
     });
     throw error;
   }

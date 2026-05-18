@@ -1,10 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const samplePath = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '../examples/sample.txt'
-);
+const samplePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../examples/sample.txt');
 
 // Mocked planner output to keep the workshop offline.
 // Replace with a real LLM provider when needed.

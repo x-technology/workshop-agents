@@ -1,11 +1,4 @@
-import {
-  GEMINI_MODEL,
-  LOCAL_BASE_URL,
-  LOCAL_MODEL,
-  OPENAI_BASE_URL,
-  OPENAI_MODEL,
-  PROVIDER
-} from './config.js';
+import { GEMINI_MODEL, LOCAL_BASE_URL, LOCAL_MODEL, OPENAI_BASE_URL, OPENAI_MODEL, PROVIDER } from './config.js';
 import { KeywordFallbackLlm } from './fallback-llm.js';
 import { OpenAICompatibleLlm } from './openai-compatible-llm.js';
 
@@ -24,7 +17,7 @@ export function resolveModel() {
     if (!hasGeminiKey()) {
       return {
         model: new KeywordFallbackLlm(),
-        reason: 'Missing GOOGLE_API_KEY or GEMINI_API_KEY. Using keyword fallback model.'
+        reason: 'Missing GOOGLE_API_KEY or GEMINI_API_KEY. Using keyword fallback model.',
       };
     }
     return { model: GEMINI_MODEL, reason: null };
@@ -34,16 +27,16 @@ export function resolveModel() {
     if (!hasOpenAIKey()) {
       return {
         model: new KeywordFallbackLlm(),
-        reason: 'Missing OPENAI_API_KEY. Using keyword fallback model.'
+        reason: 'Missing OPENAI_API_KEY. Using keyword fallback model.',
       };
     }
     return {
       model: new OpenAICompatibleLlm({
         model: OPENAI_MODEL,
         apiKey: process.env.OPENAI_API_KEY,
-        baseUrl: OPENAI_BASE_URL
+        baseUrl: OPENAI_BASE_URL,
       }),
-      reason: null
+      reason: null,
     };
   }
 
@@ -52,9 +45,9 @@ export function resolveModel() {
       model: new OpenAICompatibleLlm({
         model: LOCAL_MODEL,
         apiKey: process.env.LOCAL_API_KEY,
-        baseUrl: LOCAL_BASE_URL
+        baseUrl: LOCAL_BASE_URL,
       }),
-      reason: null
+      reason: null,
     };
   }
 
@@ -67,14 +60,14 @@ export function resolveModel() {
       model: new OpenAICompatibleLlm({
         model: OPENAI_MODEL,
         apiKey: process.env.OPENAI_API_KEY,
-        baseUrl: OPENAI_BASE_URL
+        baseUrl: OPENAI_BASE_URL,
       }),
-      reason: null
+      reason: null,
     };
   }
 
   return {
     model: new KeywordFallbackLlm(),
-    reason: 'No model credentials found. Using keyword fallback model.'
+    reason: 'No model credentials found. Using keyword fallback model.',
   };
 }

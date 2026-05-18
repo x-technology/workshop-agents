@@ -17,33 +17,71 @@ This step ships minimal n8n custom nodes for visual orchestration. The intended 
 The node reads each incoming item and accepts any of these payload shapes:
 
 ```json
-{ "from": "boss@company.com", "subject": "Follow up", "body": "Please schedule a call." }
+{
+  "from": "boss@company.com",
+  "subject": "Follow up",
+  "body": "Please schedule a call."
+}
 ```
 
 ```json
-{ "email": { "from": "boss@company.com", "subject": "Follow up", "body": "Please schedule a call." } }
+{
+  "email": {
+    "from": "boss@company.com",
+    "subject": "Follow up",
+    "body": "Please schedule a call."
+  }
+}
 ```
 
 ```json
-{ "emails": [ { "from": "hr@company.com", "subject": "Team sync", "body": "Invite for tomorrow" } ] }
+{
+  "emails": [
+    {
+      "from": "hr@company.com",
+      "subject": "Team sync",
+      "body": "Invite for tomorrow"
+    }
+  ]
+}
 ```
 
 `Email Router` outputs one item per email with:
 
 ```json
-{ "email": { /* original email */ }, "result": { /* routeEmail output */ } }
+{
+  "email": {
+    /* original email */
+  },
+  "result": {
+    /* routeEmail output */
+  }
+}
 ```
 
 `Email Classification Agent` outputs:
 
 ```json
-{ "email": { /* original email */ }, "classification": { "category": "task|event|no_action" } }
+{
+  "email": {
+    /* original email */
+  },
+  "classification": { "category": "task|event|no_action" }
+}
 ```
 
 `Task Simulation Agent` and `Agenda Simulation Agent` output:
 
 ```json
-{ "email": { /* original email */ }, "category": "task|event", "result": { /* simulated specialist output */ } }
+{
+  "email": {
+    /* original email */
+  },
+  "category": "task|event",
+  "result": {
+    /* simulated specialist output */
+  }
+}
 ```
 
 `Task Simulation Agent` accepts `task` items only. `Agenda Simulation Agent` accepts `event` items only.
@@ -63,7 +101,7 @@ The node reads each incoming item and accepts any of these payload shapes:
 - The staged custom node file also re-exports `TaskSimulation` from `src/04-n8n/TaskSimulation.node.js`.
 - The staged custom node file also re-exports `AgendaSimulation` from `src/04-n8n/AgendaSimulation.node.js`.
 - The staged custom node file also re-exports `AgentReliability` from `src/04-n8n/AgentReliability.node.js`.
-- The step 04 nodes reuse the step 02 agents directly, or the step 03 router in the `Email Router` shortcut node.
+- The step 04 nodes reuse the step `02` classifier and the step `03` specialists directly, or the step `03` router in the `Email Router` shortcut node.
 - `Agent Reliability Monitor` does not add observability by itself. It only reads traces written by the step `05` wrappers.
 
 ## Suggested workflow

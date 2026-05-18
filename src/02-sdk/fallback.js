@@ -17,22 +17,27 @@ export function fallbackClassification(email) {
     return {
       category: 'event',
       confidence: 0.72,
-      reason: 'Mentions scheduling or calendar items.'
+      reason: 'Mentions scheduling or calendar items.',
     };
   }
 
-  if (lower.includes('please') || lower.includes('action') || lower.includes('schedule') || lower.includes('follow up')) {
+  if (
+    lower.includes('please') ||
+    lower.includes('action') ||
+    lower.includes('schedule') ||
+    lower.includes('follow up')
+  ) {
     return {
       category: 'task',
       confidence: 0.7,
-      reason: 'Requests an action or follow-up.'
+      reason: 'Requests an action or follow-up.',
     };
   }
 
   return {
     category: 'no_action',
     confidence: 0.6,
-    reason: 'Informational email.'
+    reason: 'Informational email.',
   };
 }
 
@@ -43,7 +48,7 @@ export function normalizeClassification(raw, email) {
   return {
     category: normalizeCategory(source.category ?? fallback.category),
     confidence: Number(source.confidence ?? fallback.confidence ?? 0),
-    reason: String(source.reason ?? fallback.reason ?? 'n/a')
+    reason: String(source.reason ?? fallback.reason ?? 'n/a'),
   };
 }
 
@@ -53,20 +58,20 @@ export function fallbackRoute(email) {
   if (classification.category === 'event') {
     return {
       classification,
-      result: fallbackAgendaItemSimulation(email, classification)
+      result: fallbackAgendaItemSimulation(email, classification),
     };
   }
 
   if (classification.category === 'task') {
     return {
       classification,
-      result: fallbackTaskSimulation(email, classification)
+      result: fallbackTaskSimulation(email, classification),
     };
   }
 
   return {
     classification,
-    result: fallbackNoActionSimulation(email)
+    result: fallbackNoActionSimulation(email),
   };
 }
 
@@ -81,8 +86,8 @@ export function fallbackTaskSimulation(email, classification = fallbackClassific
       title: `Follow up: ${subject}`,
       next_steps: ['Reply to the sender', 'Track the requested follow-up'],
       owner: 'you',
-      due: 'next workday'
-    }
+      due: 'next workday',
+    },
   };
 }
 
@@ -97,14 +102,14 @@ export function fallbackAgendaItemSimulation(email, classification = fallbackCla
       title: subject,
       time: 'tomorrow 10:00',
       attendees: ['you', 'sender'],
-      location: 'video call'
-    }
+      location: 'video call',
+    },
   };
 }
 
 export function fallbackNoActionSimulation(email) {
   return {
     type: 'no_action',
-    summary: `Informational update, no action required for "${email.subject ?? 'this email'}".`
+    summary: `Informational update, no action required for "${email.subject ?? 'this email'}".`,
   };
 }

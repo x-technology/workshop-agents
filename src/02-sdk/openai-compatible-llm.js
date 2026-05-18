@@ -60,7 +60,7 @@ export class OpenAICompatibleLlm extends BaseLlm {
       },
       async *receive() {
         yield* llm.generateContentAsync({ ...baseRequest, contents: history }, false);
-      }
+      },
     };
   }
 
@@ -70,20 +70,20 @@ export class OpenAICompatibleLlm extends BaseLlm {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {})
+        ...(this.apiKey ? { Authorization: `Bearer ${this.apiKey}` } : {}),
       },
       body: JSON.stringify({
         model: this.model,
         messages,
-        temperature: llmRequest?.config?.temperature
-      })
+        temperature: llmRequest?.config?.temperature,
+      }),
     });
 
     if (!res.ok) {
       const errorText = await res.text();
       yield {
         errorCode: String(res.status),
-        errorMessage: errorText
+        errorMessage: errorText,
       };
       return;
     }
@@ -94,8 +94,8 @@ export class OpenAICompatibleLlm extends BaseLlm {
     yield {
       content: {
         role: 'model',
-        parts: [{ text }]
-      }
+        parts: [{ text }],
+      },
     };
   }
 }

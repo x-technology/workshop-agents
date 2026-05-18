@@ -15,19 +15,11 @@ export function resolveOpenAICompatibleConfig() {
     apiKey,
     baseUrl,
     model,
-    isConfigured: Boolean(apiKey) || !isDefaultBaseUrl
+    isConfigured: Boolean(apiKey) || !isDefaultBaseUrl,
   };
 }
 
-export async function createJsonCompletion({
-  system,
-  user,
-  schema,
-  schemaName,
-  model,
-  apiKey,
-  baseUrl
-}) {
+export async function createJsonCompletion({ system, user, schema, schemaName, model, apiKey, baseUrl }) {
   const resolved = resolveOpenAICompatibleConfig();
   const targetBaseUrl = trimTrailingSlash(baseUrl || resolved.baseUrl);
   const targetApiKey = apiKey ?? resolved.apiKey;
@@ -37,7 +29,7 @@ export async function createJsonCompletion({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(targetApiKey ? { Authorization: `Bearer ${targetApiKey}` } : {})
+      ...(targetApiKey ? { Authorization: `Bearer ${targetApiKey}` } : {}),
     },
     body: JSON.stringify({
       model: targetModel,
@@ -46,14 +38,14 @@ export async function createJsonCompletion({
         json_schema: {
           name: schemaName,
           strict: true,
-          schema
-        }
+          schema,
+        },
       },
       messages: [
         { role: 'system', content: system },
-        { role: 'user', content: user }
-      ]
-    })
+        { role: 'user', content: user },
+      ],
+    }),
   });
 
   if (!response.ok) {
@@ -70,8 +62,6 @@ export async function createJsonCompletion({
   try {
     return JSON.parse(raw);
   } catch (error) {
-    throw new Error(
-      `LLM returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`
-    );
+    throw new Error(`LLM returned invalid JSON: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

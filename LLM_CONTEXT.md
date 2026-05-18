@@ -1,6 +1,6 @@
 # LLM Context: HolyJS 2026 Agent Runtime Workshop
 
-This repository is a workshop project for building agent runtimes in Node.js. The practical flow demonstrates an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to specialized agents. Step `01` uses a direct OpenAI-compatible HTTP call without any SDK and falls back to naive keyword routing when `OPENAI_API_KEY` is not set. Step `02` defines reusable agents through the Google ADK. The Google ADK demo uses Gemini when `GOOGLE_API_KEY` or `GEMINI_API_KEY` is set, otherwise it falls back locally through a keyword-based `BaseLlm`.
+This repository is a workshop project for building agent runtimes in Node.js. The practical flow demonstrates an email triage agent that classifies incoming emails into `task`, `event`, or `no_action` and routes them to specialized agents. Step `01` uses a direct OpenAI-compatible HTTP call without any SDK and falls back to naive keyword routing when `OPENAI_API_KEY` is not set. Step `02` focuses on one reusable classifier agent through the Google ADK. The Google ADK demo uses Gemini when `GOOGLE_API_KEY` or `GEMINI_API_KEY` is set, otherwise it falls back locally through a keyword-based `BaseLlm`.
 
 ## Project goals
 
@@ -19,10 +19,10 @@ npm run start:01
 
 ## How the email flow works
 
-1. `src/02-sdk/` provides three reusable agents: classify email, create task simulation, create agenda item simulation.
-2. `src/03-orchestrator/` orchestrates those agents in one monolithic file.
-3. `src/04-n8n/` exposes the same agent boundaries as workflow nodes.
-4. `src/05-security-observability/` wraps existing agents with prompt-injection checks and success/error monitoring.
+1. `src/02-sdk/` provides the reusable classifier agent.
+2. `src/03-orchestrator/` adds specialist agents and orchestrates everything in one monolithic file.
+3. `src/04-n8n/` exposes the same boundaries as workflow nodes.
+4. `src/05-security-observability/` wraps the classifier and specialists with prompt-injection checks and success/error monitoring.
 
 ## Model selection
 
@@ -35,11 +35,11 @@ npm run start:01
   - Direct LLM email classifier with no SDK (`run.js`).
 
 - `src/02-sdk/`
-  - Google ADK demo using reusable classification and specialist agents (`run.js`).
+  - Google ADK demo using one reusable classification agent (`run.js`).
   - Short README describing SDK rationale.
 
 - `src/03-orchestrator/`
-  - Single-email orchestration example that intentionally keeps classification and specialist dispatch in one place (`run.js`).
+  - Specialist agents and a single-email orchestration example that intentionally keeps classification and dispatch in one place (`run.js`).
 
 - `src/04-n8n/`
   - n8n nodes for classification and specialist-agent orchestration.
@@ -58,10 +58,10 @@ npm run start:01
 ## Entry points
 
 - `npm run start:01` → standalone triage via raw OpenAI-compatible HTTP, with naive fallback when no API key is set
-- `npm run start:02` → Google ADK classifier + specialist agent flow for one email
-- `npm run start:03` → monolithic orchestration for one email using the step 02 agents
+- `npm run start:02` → Google ADK classifier for one email
+- `npm run start:03` → monolithic orchestration for one email using the step 02 classifier and step 03 specialists
 - `npm run start:04` → stage n8n nodes for visual orchestration
-- `npm run start:05` → security + observability wrappers around the step 02 agents
+- `npm run start:05` → security + observability wrappers around the step 02 classifier and step 03 specialists
 
 ## Environment variables
 

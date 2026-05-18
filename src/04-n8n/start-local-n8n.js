@@ -12,8 +12,8 @@ const child = spawn(process.execPath, [n8nBin, ...process.argv.slice(2)], {
   stdio: 'inherit',
   env: {
     ...inheritedEnv,
-    N8N_USER_FOLDER: repoRoot
-  }
+    N8N_USER_FOLDER: repoRoot,
+  },
 });
 
 child.on('exit', code => {

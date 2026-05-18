@@ -18,11 +18,11 @@ export class EmailClassification {
     version: 1,
     description: 'Classify emails as task, event, or no_action using the step 02 ADK agent',
     defaults: {
-      name: 'Email Classification Agent'
+      name: 'Email Classification Agent',
     },
     inputs: [NodeConnectionTypes.Main],
     outputs: [NodeConnectionTypes.Main],
-    properties: []
+    properties: [],
   };
 
   async execute() {
@@ -35,13 +35,13 @@ export class EmailClassification {
 
       if (!email) {
         const error = new NodeOperationError(this.getNode(), 'No email payload found on item', {
-          itemIndex
+          itemIndex,
         });
 
         if (this.continueOnFail()) {
           outputItems.push({
             json: { error: error.message },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }
@@ -54,9 +54,9 @@ export class EmailClassification {
         outputItems.push({
           json: {
             email,
-            classification
+            classification,
           },
-          pairedItem: { item: itemIndex }
+          pairedItem: { item: itemIndex },
         });
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
@@ -64,7 +64,7 @@ export class EmailClassification {
         if (this.continueOnFail()) {
           outputItems.push({
             json: { email, error: message },
-            pairedItem: { item: itemIndex }
+            pairedItem: { item: itemIndex },
           });
           continue;
         }

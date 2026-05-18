@@ -12,6 +12,7 @@ npx tsx agent.ts      # run a specific agent file directly
 ```
 
 Docker:
+
 ```bash
 docker build -t agent-sdk .
 docker run -e ANTHROPIC_API_KEY=sk-... agent-sdk
@@ -24,14 +25,14 @@ This project uses the **Claude Agent SDK** (`@anthropic-ai/claude-agent-sdk`) fo
 ### Core pattern
 
 ```typescript
-import { query } from "@anthropic-ai/claude-agent-sdk";
+import { query } from '@anthropic-ai/claude-agent-sdk';
 
 for await (const message of query({
-  prompt: "...",
+  prompt: '...',
   options: {
-    allowedTools: ["Read", "Edit", "Glob"],
-    permissionMode: "acceptEdits"
-  }
+    allowedTools: ['Read', 'Edit', 'Glob'],
+    permissionMode: 'acceptEdits',
+  },
 })) {
   // message.type === "assistant" | "result" | "system" | "user"
 }
@@ -41,12 +42,12 @@ for await (const message of query({
 
 ### Permission modes
 
-| Mode | Behavior |
-|---|---|
-| `acceptEdits` | Auto-approves file edits; prompts for other actions |
-| `dontAsk` | Denies anything not in `allowedTools` |
-| `bypassPermissions` | No prompts — for sandboxed CI/Docker environments |
-| `auto` | Model classifier approves/denies each tool call |
+| Mode                | Behavior                                            |
+| ------------------- | --------------------------------------------------- |
+| `acceptEdits`       | Auto-approves file edits; prompts for other actions |
+| `dontAsk`           | Denies anything not in `allowedTools`               |
+| `bypassPermissions` | No prompts — for sandboxed CI/Docker environments   |
+| `auto`              | Model classifier approves/denies each tool call     |
 
 ### Authentication
 
