@@ -1,0 +1,23 @@
+{
+  "name": "managed-agent-ts",
+  "version": "1.0.0",
+  "description": "Claude Managed Agents with GitHub access - TypeScript",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "setup": "tsx src/setup.ts",
+    "clean": "tsx src/clean.ts",
+    "task": "tsx src/run-task.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.1",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}
