@@ -24,6 +24,7 @@ const required = [
   "GITHUB_REPO_URL",
   "AGENT_ID",
   "ENVIRONMENT_ID",
+  "VAULT_ID",
 ];
 
 for (const key of required) {
@@ -35,17 +36,25 @@ for (const key of required) {
 
 console.log(`\n🤖 Task: ${prompt}\n`);
 
+let textStarted = false;
+
 const result = await runTask({
   agentId: process.env.AGENT_ID!,
   environmentId: process.env.ENVIRONMENT_ID!,
   githubRepoUrl: process.env.GITHUB_REPO_URL!,
   githubToken: process.env.GITHUB_TOKEN!,
   sessionId: process.env.SESSION_ID,
+  vaultIds: [process.env.VAULT_ID!],
   prompt,
 
-  onText: (text) => process.stdout.write(text),
+  onText: (text) => {
+    // Print a header the first time text arrives in this turn
+    if (!textStarted) { console.log("\n💬 Response:"); textStarted = true; }
+    process.stdout.write(text);
+  },
 
   onToolUse: (toolName, input) => {
+    textStarted = false; // reset for next text block after tool use
     const inputStr =
       typeof input === "object"
         ? JSON.stringify(input).slice(0, 80)

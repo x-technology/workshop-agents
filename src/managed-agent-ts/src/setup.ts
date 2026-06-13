@@ -28,7 +28,7 @@ When making code changes, be conservative and surgical — only change what is n
       {
         type: "url",
         name: "github",
-        url: "https://api.githubcopilot.com/mcp/",
+        url: "https://api.githubcopilot.com/mcp",
       },
     ],
 

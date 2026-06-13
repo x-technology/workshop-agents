@@ -18,6 +18,8 @@ export interface RunTaskOptions {
   prompt: string;
   /** Optional: resume an existing session instead of creating a new one */
   sessionId?: string;
+  /** Vault IDs supplying MCP credentials (e.g. GitHub token) */
+  vaultIds?: string[];
   /** Called with each line of streamed agent output */
   onText?: (text: string) => void;
   /** Called when the agent uses a tool */
@@ -51,6 +53,7 @@ export async function runTask(opts: RunTaskOptions): Promise<TaskResult> {
     githubRepoUrl,
     githubToken,
     prompt,
+    vaultIds,
     onText,
     onToolUse,
     onToolResult,
@@ -77,6 +80,7 @@ export async function runTask(opts: RunTaskOptions): Promise<TaskResult> {
           authorization_token: githubToken,
         },
       ],
+      ...(vaultIds?.length ? { vault_ids: vaultIds } : {}),
     });
 
     sessionId = session.id;
@@ -103,6 +107,7 @@ export async function runTask(opts: RunTaskOptions): Promise<TaskResult> {
   const stream = await beta.sessions.events.stream(sessionId);
 
   for await (const event of stream) {
+    console.log(`  [event] ${event.type}`, JSON.stringify(event));
     switch (event.type) {
       // Agent produced a text block
       case "agent.text":
