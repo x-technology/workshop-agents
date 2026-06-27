@@ -71,6 +71,16 @@ npm run dev   # runs src/index.ts
 
 ---
 
+## Run
+
+```sh
+npm run setup-vault
+npm run setup
+npm run task -- "Add text to README file in the main, commit it to a new branch, push it. Use the github MCP server to create a pull request in OWNER/REPO into main brach"
+npm run task -- "which branch u r at?"
+```
+
+
 ## Key concepts
 
 ### Agent (create once, reuse forever)
