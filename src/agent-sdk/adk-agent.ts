@@ -1,5 +1,9 @@
-import {FunctionTool, LlmAgent} from '@google/adk';
+import {FunctionTool, LlmAgent, LLMRegistry} from '@google/adk';
 import {z} from 'zod';
+import {ClaudeLlm} from './claude-llm.js';
+
+/* Register Claude LLM with ADK */
+LLMRegistry.register(ClaudeLlm);
 
 /* Mock tool implementation */
 const getCurrentTime = new FunctionTool({
@@ -15,7 +19,7 @@ const getCurrentTime = new FunctionTool({
 
 export const rootAgent = new LlmAgent({
   name: 'hello_time_agent',
-  model: 'gemini-flash-latest',
+  model: 'claude-sonnet-4-6',
   description: 'Tells the current time in a specified city.',
   instruction: `You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.`,

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "*",
+    "@anthropic-ai/sdk": "*",
     "@google/adk": "^0.4.0",
     "@google/genai": "*",
     "ai": "*",

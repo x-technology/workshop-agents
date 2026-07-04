@@ -1,14 +1,16 @@
-import { query } from '@anthropic-ai/claude-agent-sdk';
+import { query } from "@anthropic-ai/claude-agent-sdk";
+import { resolvePrompt } from "./lib/prompt.js";
 
-const prompt = process.argv[2] ?? "Summarize what we've done so far.";
-console.log(prompt);
+const prompt = resolvePrompt(process.argv[2]);
+console.log(prompt)
 
 for await (const message of query({
   prompt,
   options: {
-    allowedTools: ['Read', 'Glob', 'Grep'],
-    permissionMode: 'acceptEdits',
-    continue: true,
+    allowedTools: ["Read", "Glob", "Grep", "Bash"],
+    // permissionMode: "acceptEdits",
+    permissionMode: "dontAsk",
+    continue: true
   },
 })) {
   if (message.type === 'assistant' && message.message?.content) {
