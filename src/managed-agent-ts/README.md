@@ -139,12 +139,6 @@ case "requires_action":
   });
 ```
 
-### Use with Discord bot
-
-In `src/agent/handler.ts` from the discord-claude-agent project,
-replace the Agent SDK `query()` call with `runTask()` from this package.
-The Discord bot becomes a thin relay — all agent execution stays on Anthropic.
-
 ---
 
 ## Docs
