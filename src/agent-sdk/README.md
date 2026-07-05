@@ -11,6 +11,7 @@ docker build -t agent-sdk .
 docker run -it -e ANTHROPIC_API_KEY=$ANTR_KEY -v $(pwd)/agent.ts:/app/agent.ts agent-sdk /bin/bash
 # inside the container
 # ls, pwd
+# npm i @anthropic-ai/claude-agent-sd
 npm run start -- "add a simple test and test environment, dir and runner command - i want to use node.js native test framework"
 npm test
 ```

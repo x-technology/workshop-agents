@@ -43,7 +43,7 @@ function convertToAnthropicMessages(
 ): Anthropic.Messages.MessageParam[] {
   return contents.map((content) => ({
     role: content.role === 'model' ? 'assistant' : 'user',
-    content: content.parts.map(convertPartToAnthropicContent).flat(),
+    content: (content.parts ?? []).map(convertPartToAnthropicContent).flat(),
   }));
 }
 
@@ -65,7 +65,7 @@ function convertPartToAnthropicContent(
       source: {
         type: 'base64',
         media_type: mediaType,
-        data,
+        data: data ?? '',
       },
     };
   }
@@ -73,8 +73,8 @@ function convertPartToAnthropicContent(
     const { name, args } = part.functionCall;
     return {
       type: 'tool_use',
-      id: `tool_${Math.random().toString(36).slice(2, 11)}`,
-      name,
+      id: name ?? '',
+      name: name ?? '',
       input: args || {},
     };
   }
@@ -82,7 +82,7 @@ function convertPartToAnthropicContent(
     const { name, response } = part.functionResponse;
     return {
       type: 'tool_result',
-      tool_use_id: name,
+      tool_use_id: name ?? '',
       content: JSON.stringify(response),
     };
   }
@@ -106,17 +106,65 @@ function extractSystemInstructions(llmRequest: LlmRequest): string {
   return '';
 }
 
+const JSON_SCHEMA_KEYS = new Set([
+  'type','description','properties','required','items','enum',
+  'anyOf','oneOf','allOf','not','title','default','minimum','maximum',
+  'minLength','maxLength','pattern','minItems','maxItems','$ref',
+]);
+
+function normalizeSchema(s: any): Record<string, any> {
+  if (!s || typeof s !== 'object') return { type: 'object', properties: {} };
+  const out: Record<string, any> = {};
+  for (const [k, v] of Object.entries(s)) {
+    if (!JSON_SCHEMA_KEYS.has(k)) continue;
+    if (k === 'type' && typeof v === 'string') {
+      out[k] = v.toLowerCase();
+    } else if (k === 'properties' && v && typeof v === 'object') {
+      out[k] = Object.fromEntries(
+        Object.entries(v).map(([name, schema]) => [name, normalizeSchema(schema)])
+      );
+    } else if (k === 'items' && v && typeof v === 'object' && !Array.isArray(v)) {
+      out[k] = normalizeSchema(v);
+    } else if (Array.isArray(v) && (k === 'anyOf' || k === 'oneOf' || k === 'allOf')) {
+      out[k] = v.map(normalizeSchema);
+    } else {
+      out[k] = v;
+    }
+  }
+  if (!out.type) out.type = 'object';
+  return out;
+}
+
 function convertToolsToAnthropic(
   toolsInput: any
 ): Anthropic.Messages.Tool[] {
   if (!toolsInput) return [];
 
   const tools = Array.isArray(toolsInput) ? toolsInput : [];
-  return tools.map((tool) => ({
-    name: tool.name,
-    description: tool.description || '',
-    input_schema: tool.parameters || { type: 'object', properties: {} },
+  const functionDecls: any[] = [];
+  for (const tool of tools) {
+    if (Array.isArray(tool.functionDeclarations)) {
+      functionDecls.push(...tool.functionDeclarations);
+    } else if (tool.name) {
+      functionDecls.push(tool);
+    }
+  }
+  return functionDecls.map((fn) => ({
+    name: fn.name,
+    description: fn.description || '',
+    input_schema: normalizeSchema(fn.parameters) as Anthropic.Messages.Tool['input_schema'],
   }));
+}
+
+function mapFinishReason(stopReason: string | null | undefined): import('@google/genai').FinishReason | undefined {
+  if (!stopReason) return undefined;
+  const map: Record<string, string> = {
+    end_turn: 'STOP',
+    max_tokens: 'MAX_TOKENS',
+    stop_sequence: 'STOP',
+    tool_use: 'STOP',
+  };
+  return (map[stopReason] ?? 'OTHER') as import('@google/genai').FinishReason;
 }
 
 function convertAnthropicResponseToLlmResponse(
@@ -144,7 +192,6 @@ function convertAnthropicResponseToLlmResponse(
 
   return {
     content,
-    finishReason:
-      response.stop_reason === 'end_turn' ? 'STOP' : response.stop_reason,
+    finishReason: mapFinishReason(response.stop_reason),
   };
 }
