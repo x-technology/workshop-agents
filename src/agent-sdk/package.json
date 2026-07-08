@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node agent.js",
-    "start:adk": "tsx agent.ts",
+    "start:adk": "tsx adk-agent.ts",
     "dev": "tsx --watch agent.ts",
     "test": "node --test test/",
     "test:watch": "node --test --watch test/"
